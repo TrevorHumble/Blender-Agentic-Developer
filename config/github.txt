@@ -1,0 +1,5 @@
+https://github.com/TrevorHumble/Blender-Agentic-Developer
+
+Provided by Trevor 2026-06-15. This file is the deterministic graduation trigger for backlog item B8
+(GitHub remote + push), per issues/0009-future-work-backlog.md. Its existence — not a verbal approval
+— is what graduates B8.

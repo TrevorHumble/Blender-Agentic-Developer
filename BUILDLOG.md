@@ -20,3 +20,5 @@ Append-only record of the autonomous MVP build. Newest at the bottom.
 - 2026-06-15 — Finalize (#0008): repo CLAUDE.md + README. Review FAIL (banned-word list restated) → fixed. MVP foundation complete.
 - 2026-06-15 — Doc-state audit: DESIGN.md had drifted (written pre-build). 8 drifts fixed → verified PASS. Committed `e5f8130`.
 - 2026-06-15 — Future work (#0009 backlog + #0010 ready-issue): authored, run through reviewer-issue. FAIL twice (human-approval graduation, producer-POV stories, untestable outcomes, interpretive criteria) → fixed → round-3 PASS. Backlog/ready tier distinction established and honored.
+- 2026-06-15 — `/build` slash command (#0011): issue → reviewer-issue FAIL (consumer POV, unfalsifiable AC, missing `---` fence check) → fixed → PASS → implemented `.claude/commands/build.md` → artifact review caught research-ordering + model-enforcement bugs → fixed. One-command orchestrator trigger.
+- 2026-06-15 — B8 graduated: Trevor provided repo URL → `config/github.txt` written. Remote pushed to github.com/TrevorHumble/Blender-Agentic-Developer; actionable backlog filed as GitHub issues.
