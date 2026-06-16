@@ -38,3 +38,5 @@ unknowns below). Graduation opens a numbered ready-issue.
 - The exact split boundary between `bpy`-dependent and pure-logic modules for a real add-on.
 - Whether coverage under background mode counts the `bpy`-touching lines or only the pure-logic lines,
   and what coverage denominator the ≥80% bar should apply to.
+
+Graduated to #0022

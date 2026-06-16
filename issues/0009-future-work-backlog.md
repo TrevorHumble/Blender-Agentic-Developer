@@ -37,7 +37,7 @@ automatically rather than by an agent remembering to check.
 **Desired outcome:** ruff lint+format, pytest with a ≥80% coverage gate, and pre-commit hooks run on
 every commit and block the commit on failure.
 **Depends on:** the first Python code artifacts existing. **Graduate after:** a research spike on the
-Python/Blender add-on toolchain.
+Python/Blender add-on toolchain, and headless harness ready (#0022).
 
 ## B3 — Ralph-loop stop-hook automation
 **User story:** As Trevor, who needs the review loop to run to completion autonomously, I need it

@@ -255,6 +255,14 @@ CI runs on GitHub Actions under `GitHub Pro` on the public repo (unlimited minut
 
 Evals are `Claude-as-judge` (the Opus reviewer agents) + local pytest/coverage.py + headless Blender. Any dependency needing a non-Anthropic key or a hosted account is out of license by definition.
 
+## Testing
+
+The harness is dependency-free — no pytest, no pip install. Tests are split by runtime requirement:
+
+- `tests/run_pure.py` — plain Python; stubs bpy so the add-on's module-level imports succeed, then asserts pure geometry (no Blender runtime).
+- `tests/run_headless.py` — runs under `blender --background --python`; registers the add-on, exercises the operator, asserts output structure.
+- `tests/run_tests.ps1` — orchestrates both. Set `$env:BLENDER_EXE` to override the default path. Exits 1 if either sub-process exits non-zero.
+
 ## Open items
 
 Resolved (2026-06-15): repo name and URL — `github.com/TrevorHumble/Blender-Agentic-Developer` (recorded in `config/github.txt`).
