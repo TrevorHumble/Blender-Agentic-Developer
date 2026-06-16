@@ -53,12 +53,47 @@ not a repo artifact). **Graduate after:** a research spike on Claude Code stop-h
 Graduated to #0021
 
 ## B4 — Blender add-on development standards
-**User story:** As an implementation agent building a Blender add-on, I need a standard for what a good
-add-on is so my output is idiomatic and testable.
-**Desired outcome:** `standards/blender-addon-standards.md` exists with sections on add-on structure,
-`bpy` registration, the `blender_manifest.toml` extension format, and headless testing.
-**Depends on:** the Blender RAG (`C:\Users\thumb\BlenderRag`). **Graduate after:** a RAG + web research
-spike on Blender 5.x add-on best practices.
+*Refined 2026-06-16, then DEMOTED. Picked as the third refinement, but an adversarial evaluation of the
+selection found (a) a fabricated evidence claim here — corrected below — and (b) that B9 is a
+higher-integrity third pick (it closes a falsified shipped promise, same class as B10/B11, zero research).
+The selection was changed to B9, B10, B11; B4 keeps its corrected refinement but is no longer one of the
+three. The original was a vague section list; this version ties the standard to the defects it must
+prevent and makes the graduation trigger deterministic.*
+
+**User story:** As an implementation agent building a Blender add-on, I need a written standard for what a
+good add-on is — structure, registration, and the split that makes it testable — so my output is idiomatic
+and passes the existing `reviewer-pr` + `reviewer-design-philosophy` gates on the first round instead of
+needing refactors.
+
+**Why this is needed (evidence):** one of the two add-ons shipped so far drew real
+`reviewer-design-philosophy` findings before merge — #0018/bevel (duplicated vector helpers,
+None-sentinel two-pass leak, dict/namedtuple inconsistency); #0025/phyllotaxis passed the design gate
+clean ("zero red flags", BUILDLOG) but still re-derived the bpy-free-pure-function + thin-operator split
+ad hoc rather than from a shared rule. So the gate is doing its job reactively, per add-on, with no
+standard that names the split up front — every new add-on reinvents the structure and risks re-tripping
+the same classes. A standard turns the convention into an up-front rule instead of a per-merge catch. (Note
+this is a weaker "evidence" base than B10/B11, which fix already-shipped machinery that is provably inert —
+B4 is preventive, not a correctness defect; see the selection note below.)
+
+**Desired outcome:** `standards/blender-addon-standards.md` exists and is testable by literal-anchor
+checks, with at minimum these named sections: (1) **structure** — the mandatory split between a
+`bpy`-free pure-geometry function (unit/eval-testable, the deep module) and a thin `bpy.types.Operator`
+(the registration shell); (2) **registration** — `bl_info`, `register`/`unregister`, menu append/remove,
+and the `mesh.*`/`curve.*` `bl_idname` convention; (3) **extension packaging** — the Blender 5.x
+`blender_manifest.toml` extension format (the 4.2+ replacement for the legacy add-on install path);
+(4) **headless testability** — the add-on must be exercisable by `tests/run_pure.py` (stubbed bpy) and
+`tests/run_headless.py` (`--python-exit-code 1`) with at least one eval case. It must reference
+`standards/design-philosophy.md` for the deep-module rationale rather than restating it (anti-bloat), and
+the existing `reviewer-pr`/`reviewer-design-philosophy` gates apply the standard — no new reviewer agent.
+
+**Depends on:** the Blender RAG (`C:\Users\thumb\BlenderRag`) and the two shipped add-ons as exemplars
+(`addons/bevel_bezier_corners.py`, `addons/phyllotaxis.py`); `standards/design-philosophy.md` (built),
+which it must cite, not duplicate.
+**Graduate after (deterministic trigger):** `agents/researcher.md` produces a sourced findings artifact at
+`research/blender-addon-standards-findings.md` that (a) cites Blender 5.x manifest/registration/headless
+sources (RAG hits or `download.blender.org`/docs URLs, in-license), and (b) records, for each of the two
+shipped add-ons, whether the proposed standard's checks would have caught its actual design-philosophy
+findings (non-vacuousness evidence). The existence of that artifact is the trigger.
 
 ## B5 — documentation-currency reviewer agent
 **User story:** As Trevor, whose `DESIGN.md` drifted during this very build, I need an agent that catches
@@ -103,34 +138,101 @@ BUILDLOG): real follow-ups that existed only as "out of scope" prose inside alre
 two inert-gate defects. Captured here so the work is not silently lost.*
 
 ## B9 — CI coverage-% gate + ruff (B2's unmet residual)
-**User story:** As Trevor, I need the coverage and lint enforcement B2 originally promised, because #0024
-graduated B2 but shipped only the test/eval gate.
-**Desired outcome:** CI runs `ruff` (lint+format) and a coverage-percentage gate (≥ a chosen threshold)
-under Blender's bundled Python, failing the build below threshold — in-license, no hosted SaaS.
-**Depends on:** #0024 (CI, shipped). **Graduate after:** a spike confirms `coverage.py` runs under
-`blender --background` and a threshold is chosen.
+*Refined 2026-06-16 (promoted to the third pick after an adversarial evaluation flagged it as
+higher-integrity than B4). This closes a falsified shipped promise: B2's `Desired outcome` (above)
+explicitly promised "ruff lint+format, pytest with a ≥80% coverage gate," and #0024 graduated B2 while
+shipping only the test/eval gate — the same docs-say-X-machinery-doesn't class as B10/B11.*
+
+**User story:** As Trevor, who was told B2 was graduated, I need the `ruff` lint/format and the
+coverage-percentage gate B2 promised but #0024 did not ship, so "B2 done" stops overstating what CI
+actually enforces.
+
+**Desired outcome (testable):** `.github/workflows/ci.yml` gains two exit-gated steps that run in the
+existing in-license job (no hosted SaaS — no Codecov/Coveralls): (1) `ruff check` and `ruff format
+--check` over `addons/`, `tests/`, `evals/`, failing the build on any lint/format violation; (2) a
+coverage measurement of the pure-logic tests with a fail-under threshold (e.g. `coverage run` +
+`coverage report --fail-under=<N>`), failing the build below `N`. A test/demo confirms a planted lint
+violation reds the build and coverage below `N` reds the build (non-vacuous in both directions). `ruff` is
+a single pip-installed dev tool on the GitHub-hosted runner (in-license under GitHub Pro); coverage uses
+`coverage.py`.
+
+**Open design question to resolve at graduation:** the `addons/*.py` operators need `bpy`, so coverage is
+honest only over the bpy-free pure functions exercised by `tests/run_pure.py` (plain Python), OR
+`coverage.py` must run under `blender --background` for the headless tests. Pick the scope (pure-only vs
+headless) and set `N` against the measured baseline so the gate ratchets, never retroactively fails.
+
+**Depends on:** #0024 (CI, shipped), #0022 (the pure + headless harness, shipped), #0019 (in-license — the
+no-hosted-SaaS constraint).
+**Graduate after (deterministic trigger):** a spike artifact at `research/coverage-gate-findings.md`
+records (a) whether `coverage.py` runs under `blender --background` or coverage is scoped to the bpy-free
+`run_pure.py` path, and (b) the measured current coverage number that sets the initial `--fail-under=N`
+baseline. The existence of that artifact (with both values filled) is the trigger.
 
 ## B10 — Orchestrator writes the review verdict artifact (#0021's missing producer half)
-**User story:** As the orchestrator whose Stop hook blocks exit until `.review_state/verdict.txt` shows
-`PASS`/`EXIT_AUTHORIZED`, I need to actually WRITE that file at each gate, because today nothing does — so
-a legitimate PASS is re-injected until the `MAX_ITERS` backstop fires (wasteful, fails open, never a clean
-exit).
-**Desired outcome:** At each gate decision the orchestrator writes the verdict file with the real result;
-a test forces a PASS and asserts the loop exits on the first Stop (no `CAP_HIT`).
-**Depends on:** #0021 (hook, shipped). **Graduate after:** the verdict-write contract (path, format,
-when-cleared) is specified — note #0021 already defers a first-token/contains match for multi-line verdicts.
+*Refined 2026-06-16 (one of three picked). The capture was already concrete; this version pins the exact
+write contract, the race with the hook's clear step, and a non-vacuous test, and flags it system-level.*
+
+**User story:** As the orchestrator whose Stop hook (`.claude/hooks/review-gate.ps1`) blocks exit until
+`.review_state/verdict.txt` shows `PASS` or `EXIT_AUTHORIZED`, I need to actually WRITE that file at each
+gate decision, because today nothing in `agents/orchestrator.md` writes it — so a legitimate PASS is
+re-injected every Stop until the `MAX_ITERS=25` backstop trips `CAP_HIT` (≈25 wasted rounds per segment;
+fails open, so never catastrophic but never a clean first-Stop exit either).
+
+**Why this is the highest-integrity pick:** #0021 SHIPPED the enforcement half and DESIGN.md documents the
+hook as live Ralph-loop enforcement — but the producer half does not exist, so a documented safety gate is
+half-wired. This is shipped machinery that does not do what the docs say.
+
+**Desired outcome (testable):** `agents/orchestrator.md` (and `.claude/commands/build.md`) specify, as an
+executable step, that on each gate decision the orchestrator writes `.review_state/verdict.txt` with the
+real result token — `PASS` (reviewer PASS), `FAIL` (continue the loop), or `EXIT_AUTHORIZED` (from #0020's
+severity adjudicator) — using a single agreed token form that the hook's CHECK 3 already matches. The
+write/clear ownership is stated explicitly to avoid a race: the orchestrator WRITES the token before
+yielding; the hook READS it and, on a legitimate-exit token, CLEARS it (per #0021 CHECK 3) so a stale
+verdict cannot authorize the next segment's exit. A headless test forces a reviewer PASS, asserts the loop
+exits on the FIRST Stop with no `CAP_HIT`, and a second test asserts a `FAIL` token does NOT exit — proving
+the gate is non-vacuous in both directions.
+
+**Depends on:** #0021 (hook, shipped) and #0020 (the `EXIT_AUTHORIZED` token's source, shipped).
+**Graduate after (deterministic trigger):** a one-page verdict-write contract is committed (a section in
+`agents/orchestrator.md` or a named skill) fixing four things — the file path, the exact token set and
+match rule (resolving #0021's deferred first-token/contains-vs-whole-string note), who writes, who clears —
+AND the two test cases above are enumerated. The existence of that committed contract section is the
+trigger. (Implementation is itself a **system-level change** — it edits `orchestrator.md` — so it routes to
+the two-independent-reviewer bar.)
 
 ## B11 — Reviewer-routing table in the orchestrator (inert specialized gates)
-**User story:** As a self-modifying system, I need the orchestrator to actually spawn the right
-specialized reviewer (`reviewer-skill`, `reviewer-agent`, `reviewer-documentation`, `reviewer-doc-currency`)
-per artifact type, because `agents/orchestrator.md` names none of them — DESIGN.md advertises them as live
-gates but a skill/agent/doc change currently falls through to the generic `reviewer-pr`.
-**Desired outcome:** `orchestrator.md` (and `.claude/commands/build.md`) carry the artifact→reviewer
-mapping from DESIGN.md as an executable step; a test asserts a skill diff routes to `reviewer-skill` and a
-currency-triggering diff routes to `reviewer-doc-currency`. Until then, DESIGN.md must mark those reviewers
-"selected via the mapping table, not yet routed."
-**Depends on:** #0016, #0026 (the reviewers exist). **Graduate after:** the mapping is specified and the
-not-yet-wired reviewers are enumerated.
+*Refined 2026-06-16 (one of three picked). This version enumerates the exact routing map, splits the
+honesty fix from the wiring fix, and makes the trigger deterministic.*
+
+**User story:** As a self-modifying system, I need `agents/orchestrator.md` to actually spawn the right
+specialized reviewer per artifact type, because it names none of `reviewer-skill`, `reviewer-agent`,
+`reviewer-documentation`, or `reviewer-doc-currency` — so a skill, agent, or doc change currently falls
+through to the generic `reviewer-pr` and the specialized standard the roster advertises is never applied.
+(`reviewer-doc-currency` is already honestly marked "not yet live" in DESIGN.md:91 per #0026;
+`reviewer-skill`/`reviewer-agent`/`reviewer-documentation` are NOT caveated and are the actual false
+live-gate claims.)
+
+**The routing map to encode (artifact → reviewer, derived from DESIGN.md):** issue → `reviewer-issue`;
+skill → `reviewer-skill`; agent → `reviewer-agent`; documentation file → `reviewer-documentation`; any PR
+diff that touches a currency-triggering path → `reviewer-doc-currency`; every (non-doc) implementation
+artifact → `reviewer-design-philosophy`; any system-level change or component-adding issue →
+`reviewer-architecture` (at issue time). System-level changes additionally route to the
+two-independent-reviewer bar (#0015). These gates compose — a single artifact can hit several.
+
+**Desired outcome (testable):** `orchestrator.md` and `.claude/commands/build.md` carry this map as an
+executable step-5 routing table (not just prose in DESIGN.md). A headless/structural test asserts at least:
+a skill diff selects `reviewer-skill`, an agent diff selects `reviewer-agent`, and a currency-triggering
+diff selects `reviewer-doc-currency`. Split into two deliverables so the honesty fix can land immediately:
+(1) **now** — DESIGN.md marks `reviewer-skill`/`reviewer-agent`/`reviewer-documentation`/`reviewer-doc-currency`
+as "selected via the routing table, not yet routed in orchestrator.md" (removes the false live-gate claim,
+same defect class the doc-currency gate exists to catch); (2) **graduation** — the table is wired and tested.
+
+**Depends on:** #0016 (reviewer-architecture/design-philosophy) and #0026 (reviewer-doc-currency) — the
+reviewers exist; this only routes to them.
+**Graduate after (deterministic trigger):** the artifact→reviewer table above is committed in
+`agents/orchestrator.md` step 5 with each row naming a literal reviewer file, AND the test cases are
+enumerated. The existence of that committed table is the trigger. (Implementation edits `orchestrator.md`
+→ **system-level change** → two-independent-reviewer bar.)
 
 ## B12 — GitHub issue tracker reconciliation (or declare BUILDLOG canonical)
 **User story:** As anyone reading the GitHub board, I need it to match reality, because every implemented
