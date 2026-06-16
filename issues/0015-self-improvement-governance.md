@@ -4,7 +4,8 @@
 **Depends on:** #0006 (orchestrator), #0010 (issue tiers), #0013 (reviewer independence).
 **Blocks:** none.
 **Touches:** `agents/orchestrator.md`, `DESIGN.md`, `CLAUDE.md`,
-`standards/adversarial-review-protocol.md`, `skills/capture-system-defect.md` (new).
+`standards/adversarial-review-protocol.md`, `skills/capture-system-defect.md` (new),
+`skills/spawn-adversarial-review.md` (reconciled — the fan-out-threshold note now carries the system-level exception).
 
 This issue is itself a system-level change (it touches the protocol, `DESIGN.md`, and `CLAUDE.md`). It
 does not exempt itself: when implemented, its artifact is reviewed under the two-independent-reviewer bar

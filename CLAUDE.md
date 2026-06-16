@@ -41,6 +41,9 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 - Impasse — a consequential defect that survives the adjudicator plus 3 further rounds — halts
   the segment and surfaces to the operator; a halt is not an acceptance.
 - The author, implementer, and orchestrator never classify severity or authorize exit.
+- **System defects:** do not silently work around a defect in the repo's own machinery; capture
+  it as an issue via `skills/capture-system-defect.md` and route it through `issue → review`.
+- **Self-modification bar:** system-level changes require two independent reviewers (independent of each other and of the implementer, both reaching PASS); the soft cap and the severity adjudicator still apply on top of this bar. See `DESIGN.md` for which changes are system-level.
 
 ---
 

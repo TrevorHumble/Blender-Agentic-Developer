@@ -243,6 +243,21 @@ The following are not in MVP scope. Each becomes a future issue when the system 
 - Blender add-on development standards — a `standards/` document defining bpy patterns, Eevee Next conventions, and API version constraints.
 - Resilience and reliability testing — testing the orchestrator's behavior under failed tool calls, bad reviewer outputs, and looping conditions.
 
+## System-level change definition
+
+A change is a system-level change when it modifies any of the governing artifacts:
+`standards/adversarial-review-protocol.md`, any other file under `standards/`, any file under
+`agents/`, `DESIGN.md`, or `CLAUDE.md`.
+
+System-level changes are subject to the two-independent-reviewer bar defined in
+`standards/adversarial-review-protocol.md`. Ordinary add-on code and non-governing skills are
+not system-level — single reviewer suffices for them.
+
+When uncertain whether a change qualifies, apply the enumerated list above: if the diff touches
+any of those paths, it is system-level.
+
+---
+
 ## Governance: in-license constraint
 
 The system runs inside two entitlements only: a `GitHub Pro` license and an `Anthropic Max` (Claude) subscription. There is `no other external/paid API`, account, key, or third-party SaaS.

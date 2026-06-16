@@ -59,7 +59,9 @@ that produced an artifact must not also write its own passing verdict.
 For high stakes: spawn a minimum of **three** independent adversaries. A finding is
 recorded only when at least two of the three confirm it; a verdict of fine requires
 the same threshold. With fewer than three adversaries the review is invalid — do not
-proceed with two, as there is no majority on a tie.
+proceed with two, as there is no majority on a tie. (Exception: a `system-level change`
+uses the two-reviewer, both-must-PASS bar defined in the Self-modification bar section —
+fail-closed, no third tie-breaker needed.)
 
 ---
 
@@ -112,6 +114,16 @@ for what the human can actually judge (product direction, taste).
    verification step: confirm every cited URL resolves, every `file:line` reference
    exists at that location, and every item in scope has an explicit finding. This
    check is the orchestrator's responsibility and is not delegated to the reviewer.
+
+---
+
+## Self-modification bar
+
+A system-level change requires two independent reviewers. The reviewers must be independent of each other and of the implementer — spawned from clean prompts with no shared context. The change passes only when both reach PASS; disagreement is treated as FAIL, and the fix-and-re-review loop continues.
+
+This is the system-level specialization of the high-stakes independence rule in the Independence section: instead of ≥3 adversaries with 2-of-3 majority, a system-level change uses two independent reviewers who must both reach PASS, and disagreement is treated as FAIL (fail-closed), so no third tie-breaker is needed.
+
+This bar is additive to the soft cap and severity gate below. When a system-level change reaches the soft cap trigger, both the two-reviewer requirement and the severity adjudicator apply. See `DESIGN.md` for the definition of system-level change.
 
 ---
 

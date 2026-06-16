@@ -28,7 +28,7 @@ Before spawning N reviewers, spawn one independent agent to audit the briefing f
 
 ## Fan-out threshold
 
-High-stakes reviews: minimum three independent adversaries. A finding is recorded only when ≥2 of 3 confirm it. A verdict of fine requires the same threshold. Fewer than three = invalid review.
+High-stakes reviews: minimum three independent adversaries. A finding is recorded only when ≥2 of 3 confirm it. A verdict of fine requires the same threshold. Fewer than three = invalid review. (Exception: a `system-level change` uses the two-reviewer, both-must-PASS bar defined in `standards/adversarial-review-protocol.md` — fail-closed, no third tie-breaker needed.)
 
 ## Spawner must never
 

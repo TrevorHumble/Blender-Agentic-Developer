@@ -87,11 +87,33 @@ resort when local sources do not answer the question.
 
 These gates are additive to the existing `reviewer-issue` / `reviewer-pr` pipeline. They do not replace any existing step.
 
-**Architectural gate (issue-review time):** When an issue is a system-level change or adds a new component, spawn `agents/reviewer-architecture.md` (Opus) after `reviewer-issue` passes and before implementation begins. A FAIL from `reviewer-architecture` is fixed and re-reviewed; it is never overridden. A system-level change is any edit that touches the protocol, a standard, or the orchestrator/reviewer agent specs (examples: modifying `standards/adversarial-review-protocol.md`, editing `agents/orchestrator.md`, adding a new reviewer agent).
+**Architectural gate (issue-review time):** When an issue is a system-level change or adds a new component, spawn `agents/reviewer-architecture.md` (Opus) after `reviewer-issue` passes and before implementation begins. A FAIL from `reviewer-architecture` is fixed and re-reviewed; it is never overridden. A `system-level change` is defined in DESIGN.md (it touches the protocol, a standard, an agent spec, DESIGN.md, or CLAUDE.md).
 
 **Design-philosophy gate (PR-review time):** An implementation artifact is code, an agent spec, a skill, or a standard. A doc-only or typo-only change is NOT an implementation artifact and skips this gate. Spawn `agents/reviewer-design-philosophy.md` (Opus) for every implementation artifact at PR-review time, after `reviewer-pr` returns PASS. A FAIL is fixed and re-reviewed; it is never overridden.
 
 **Periodic full-system architectural audit:** Starting from the first BUILDLOG entry after #0016 merges, count each committed-issue entry appended to `BUILDLOG.md` (one entry is appended per merge; audit entries, which are prefixed `[AUDIT]`, are not counted). On every 5th counted entry, run a `full-system architectural audit` over `DESIGN.md` and the `agents/`, `skills/`, and `standards/` inventory, and append the outcome as an `[AUDIT]`-prefixed BUILDLOG line (excluded from the count).
+
+---
+
+## Capturing a system defect mid-run
+
+When a system defect surfaces during a Blender-development run — a skill returns a wrong result,
+the RAG is stale, a reviewer rubber-stamps or false-flags, a standard is ambiguous, a process
+step misroutes — do not silently work around it.
+
+**Action:** capture it as an issue using `skills/capture-system-defect.md`, then route it through
+`issue → review` in the standard pipeline.
+
+**Fix-now vs. backlog decision:**
+
+- **fix-now** — choose this only when the defect `blocks the current task`'s correctness or
+  safety and cannot be worked around without compromising the deliverable. File the issue as a
+  `ready` issue (meets the ready-tier bar), then pause the current task, fix the defect through
+  the pipeline, and resume.
+- **backlog** — any defect that does not meet the fix-now bar. File the issue at `backlog` tier
+  and continue. A backlog capture `does not derail` the run; the defect enters the queue.
+
+The trigger is the agent noticing. No telemetry or automated detection is required.
 
 ---
 
