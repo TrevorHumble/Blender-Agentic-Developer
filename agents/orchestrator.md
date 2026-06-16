@@ -46,23 +46,23 @@ allowed rounds.
 
 ## Stop condition
 
-Cap at **3 review rounds** per artifact.
+**soft cap at 3 review rounds** per artifact.
 
 - Every FAIL is fixed by the implementation agent and re-reviewed with a fresh reviewer instance.
   The author never decides a finding is a "nitpick."
-- If the artifact has not reached PASS after 3 rounds, spawn **one independent second reviewer**
-  (Opus, clean prompt, no context from prior rounds) to adjudicate: which remaining defects
-  actually violate a stated acceptance criterion or introduce ambiguity/contradiction? Only those
-  block. Genuinely stylistic items are logged to `BUILDLOG.md` as follow-up issues, not silently
-  dropped.
-- **Binding adjudication constraint:** for every finding the second reviewer retains as blocking,
-  it must cite — by exact text — either the specific acceptance criterion from the issue it
-  violates or the specific clause of `standards/adversarial-review-protocol.md` it contravenes.
-  Reclassifying a finding as non-blocking or stylistic likewise requires an explicit textual basis
-  from one of those two sources. No finding is cleared, downgraded, or retained without a cited
-  basis; bare assertion is not sufficient.
-- If still unresolved after adjudication, halt the segment, log the outcome in `BUILDLOG.md`, and
-  continue with independent segments.
+- At 3 rounds without PASS, spawn `agents/severity-adjudicator.md` (Opus, clean prompt, no
+  context from prior rounds). The adjudicator classifies every remaining open defect as
+  `consequential` or `inconsequential` and cites a basis for each.
+- On a consequential defect, the loop continues — fix and re-review, then re-invoke the
+  adjudicator. Bad work is never silently accepted.
+- Exit is authorized only when every remaining defect is inconsequential. The author,
+  implementer, and orchestrator never classify severity or authorize exit.
+- **Impasse:** the orchestrator tracks the post-gate round count and declares the impasse.
+  A consequential defect that survives the adjudicator plus 3 further fix-and-re-review
+  rounds triggers the orchestrator to halt and surface to the operator. The severity
+  adjudicator only classifies severity per invocation; it cannot track elapsed rounds.
+  Log the halt in `BUILDLOG.md` and continue with independent segments. a halt is not an
+  acceptance — the work is not merged.
 
 ---
 

@@ -4,7 +4,7 @@ description: Run the full issue-to-commit pipeline on a goal. Usage: /build <goa
 
 You are the orchestrator defined in `agents/orchestrator.md`. Follow all rules in `CLAUDE.md` and `standards/`.
 
-This pipeline assumes the session runs on Opus. If it does not, switch with `/model` before continuing — running the orchestrator below Opus degrades decision quality. (Reviewers and the adjudicator run on Opus; the implementation agent and other spawned agents run on Sonnet — see the Model policy below.)
+This pipeline assumes the session runs on Opus. If it does not, switch with `/model` before continuing — running the orchestrator below Opus degrades decision quality. (Reviewers and the severity adjudicator run on Opus; the implementation agent and other spawned agents run on Sonnet — see the Model policy below.)
 
 Run goal: $ARGUMENTS
 
@@ -18,6 +18,6 @@ Steps:
 5. Spawn the appropriate `agents/reviewer-*.md` (Opus) against the artifact. Reviewer receives only the artifact and the relevant standard — no framing, no hints. For every implementation artifact (code, agent spec, skill, or standard — not a doc-only or typo-only change), after `reviewer-pr` returns PASS, also spawn `agents/reviewer-design-philosophy.md` (Opus) — both gates must pass before merge.
 6. On PASS, commit with a short message and append one line to `BUILDLOG.md`.
 
-Stop condition — no author override: cap at 3 review rounds per artifact. After 3 rounds without PASS, spawn one independent adjudicator (Opus, clean prompt, no prior-round context). The adjudicator must cite the exact acceptance criterion or `standards/adversarial-review-protocol.md` clause for each retained blocking defect. Stylistic items are logged to `BUILDLOG.md` as follow-up issues. If still unresolved after adjudication, halt the segment, log it, and continue with independent segments.
+Stop condition — no author override: the 3-round mark is a soft cap — a trigger, not a hard cap. After 3 rounds without PASS, spawn one independent `severity adjudicator` (Opus, clean prompt, no prior-round context). The severity adjudicator classifies every remaining open defect as `consequential` or `inconsequential` and must cite a basis for each. Exit is authorized only when every remaining defect is inconsequential; the loop never accepts work while a consequential defect remains. On a consequential defect, the loop continues — fix and re-review, then re-invoke the severity adjudicator. Impasse — a consequential defect that survives the severity gate plus 3 further fix-and-re-review rounds — halts the segment; log the halt in `BUILDLOG.md` and continue with independent segments. The orchestrator tracks the post-gate round count and declares the impasse. a halt is not an acceptance — the work is not merged.
 
-Model policy: orchestrator = Opus; implementation agent and non-reviewer spawned agents = Sonnet; all reviewers (including adjudicator) = Opus. Set `model:` explicitly on every spawn call — never rely on defaults.
+Model policy: orchestrator = Opus; implementation agent and non-reviewer spawned agents = Sonnet; all reviewers (including severity adjudicator) = Opus. Set `model:` explicitly on every spawn call — never rely on defaults.

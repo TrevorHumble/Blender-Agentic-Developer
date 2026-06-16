@@ -50,12 +50,16 @@ The system cannot use its own committed skills before they exist. So the build i
    standard. Fix and re-review until PASS.
 5. Commit the segment (direct git). Append a one-line BUILDLOG.md entry.
 
-**Stop condition (interim, replaces the deleted autonomy override).** Cap at 3 review rounds per
-artifact. If not PASS after 3, spawn ONE independent second reviewer to adjudicate which remaining
-defects actually violate a stated acceptance criterion or introduce ambiguity/contradiction — only
-those block. Genuinely stylistic leftovers are logged to BUILDLOG.md as follow-up issues, not
-silently dropped. If still unresolved, halt that segment, log it, and continue with independent
-segments. The author never decides what is a "nitpick."
+**Stop condition (soft cap + severity gate — superseded by #0020).** The 3-round mark is a soft cap —
+a trigger, not a hard cap. At 3 rounds without PASS, spawn an independent `severity adjudicator`
+(Opus, clean prompt, no prior-round context). The severity adjudicator classifies every remaining
+open defect as `consequential` or `inconsequential` and cites a basis for each. Exit is authorized
+only when every remaining defect is inconsequential; the loop never accepts work while a consequential
+defect remains. On a consequential defect, the loop continues — fix and re-review, then re-invoke
+the severity adjudicator. Impasse — a consequential defect that survives the severity gate plus 3
+further fix-and-re-review rounds — halts the segment; log and continue with independent segments.
+The orchestrator tracks the post-gate round count and declares the impasse. The author never decides
+what is a "nitpick."
 
 ## Segment order (dependency-layered)
 **Layer A — cross-cutting standards (reviewed via held bootstrap protocol):**

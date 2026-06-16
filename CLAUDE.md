@@ -32,10 +32,15 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 ## Stop condition
 
 - A FAIL is fixed, never overridden by the author.
-- Cap: **3 review rounds** per artifact.
-- After 3 rounds without PASS: spawn one independent adjudicator. The adjudicator must cite a specific acceptance criterion or ambiguity/contradiction for each remaining blocking defect. Genuinely stylistic issues are logged to `BUILDLOG.md` as follow-up issues — not silently dropped.
-- If still unresolved after adjudication: halt that segment, log it, continue with independent segments.
-- The author never decides what is a nitpick.
+- **soft cap at 3 review rounds.** The 3-round mark is a trigger, not a hard stop.
+- At 3 rounds without PASS: spawn an independent `severity adjudicator` (Opus, clean prompt,
+  no context from prior rounds). The adjudicator classifies every remaining open defect as
+  `consequential` or `inconsequential` and must cite a basis for each. Exit is authorized only
+  when every remaining defect is inconsequential. On a consequential defect, the loop continues —
+  fix and re-review. The system can never self-exit on a consequential defect.
+- Impasse — a consequential defect that survives the adjudicator plus 3 further rounds — halts
+  the segment and surfaces to the operator; a halt is not an acceptance.
+- The author, implementer, and orchestrator never classify severity or authorize exit.
 
 ---
 

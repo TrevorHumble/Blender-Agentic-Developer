@@ -160,7 +160,19 @@ Updates to skills or agents follow the same pipeline. The artifact goes to revie
 
 An external evaluator (a fresh reviewer agent) checks the work and re-injects the task until it passes. Self-assessment is not trusted — the agent that produced the artifact does not evaluate it.
 
-**Stop condition (as-built):** a FAIL is fixed, never overridden by the author. Cap is 3 review rounds per artifact. After 3 rounds without PASS, an independent adjudicator is spawned (a fresh reviewer-class agent given adjudicator instructions — not a separate committed agents/adjudicator.md file). For every finding the adjudicator retains as blocking, it must cite — by exact text — either the specific acceptance criterion it violates or the specific clause of `standards/adversarial-review-protocol.md` it contravenes. Reclassifying a finding as non-blocking or stylistic likewise requires an explicit textual basis from one of those two sources; no finding is cleared, downgraded, or retained on bare assertion. Genuinely stylistic issues are logged to `BUILDLOG.md` as follow-up items — not silently dropped and not declared nitpicks by the author. If unresolved after adjudication, that segment halts and independent segments continue.
+**Stop condition (soft cap + severity gate):** a FAIL is fixed, never overridden by the author.
+The 3-round mark is a soft cap — a trigger, not a hard stop. At 3 rounds without PASS, the
+orchestrator spawns an independent `severity adjudicator` (a fresh Opus agent, clean prompt, no
+context from prior rounds). The adjudicator classifies every remaining open defect as
+`consequential` or `inconsequential` and must cite a basis for each. Exit is authorized only
+when every remaining defect is inconsequential; the loop never accepts work while a consequential
+defect remains. The author, implementer, and orchestrator never classify severity or authorize
+exit — that power belongs solely to the severity adjudicator (see `agents/severity-adjudicator.md`
+and `standards/adversarial-review-protocol.md`). On a consequential defect, the loop continues:
+fix and re-review, then re-invoke the adjudicator. Genuinely inconsequential items are logged to
+`BUILDLOG.md` as follow-up issues. Impasse — a consequential defect that survives the severity
+gate plus 3 further fix-and-re-review rounds — halts the segment; independent segments continue.
+a halt is not an acceptance; the work is not merged.
 
 ## Standards
 

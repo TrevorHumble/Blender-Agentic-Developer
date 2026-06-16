@@ -112,3 +112,40 @@ for what the human can actually judge (product direction, taste).
    verification step: confirm every cited URL resolves, every `file:line` reference
    exists at that location, and every item in scope has an explicit finding. This
    check is the orchestrator's responsibility and is not delegated to the reviewer.
+
+---
+
+## Stop condition — soft cap and severity gate
+
+the 3-round mark is a trigger, not a hard cap.
+
+**Trigger:** At 3 rounds without PASS, the orchestrator invokes a `severity adjudicator` — a
+fresh Opus agent with no context from prior rounds. The loop does not stop at this point.
+
+**Classification:** The severity adjudicator inspects every remaining open defect and classifies
+each as `consequential` or `inconsequential`. A defect is consequential if it does any of the
+following:
+
+- violates an acceptance criterion
+- is a correctness, safety, or security defect
+- is a real internal contradiction in the artifact
+- would mislead a future reader or agent
+
+A defect is inconsequential only if it is none of those — a pure style or wording nit with no
+functional, correctness, or comprehension impact. The severity adjudicator must cite a basis for
+each classification.
+
+**Exit rule:** exit is authorized only when every remaining defect is inconsequential. The
+system never accepts work while a consequential defect remains.
+the author, implementer, and orchestrator never classify severity or authorize exit — that power
+belongs solely to the severity adjudicator.
+
+**Loop-continues path:** If any defect is consequential, the implementation agent fixes it, a
+fresh reviewer re-reviews, and the severity adjudicator is re-invoked. The loop continues
+until either a reviewer returns PASS or the severity adjudicator authorizes exit.
+
+**Impasse:** A consequential defect that survives the severity gate plus 3 further fix-and-re-review rounds
+is declared an impasse. The orchestrator tracks the post-gate round count and declares the impasse; the
+severity adjudicator only classifies severity per invocation and cannot track elapsed rounds. The segment
+halts and surfaces to the operator; a halt is not an acceptance — the work is not merged. This bound
+guarantees the loop terminates without ever self-exiting by accepting consequential work.
