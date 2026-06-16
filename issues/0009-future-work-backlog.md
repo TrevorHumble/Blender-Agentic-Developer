@@ -94,6 +94,61 @@ creates real issues/PRs via `gh`.
 committed file (e.g., `config/github.txt`); the existence of that file is the deterministic trigger — not
 a verbal approval.
 
+Done — remote pushed to github.com/TrevorHumble/Blender-Agentic-Developer.
+
+---
+
+*The following were captured 2026-06-16 by the adversarial roadmap/backlog audit (recorded in
+BUILDLOG): real follow-ups that existed only as "out of scope" prose inside already-shipped issues, plus
+two inert-gate defects. Captured here so the work is not silently lost.*
+
+## B9 — CI coverage-% gate + ruff (B2's unmet residual)
+**User story:** As Trevor, I need the coverage and lint enforcement B2 originally promised, because #0024
+graduated B2 but shipped only the test/eval gate.
+**Desired outcome:** CI runs `ruff` (lint+format) and a coverage-percentage gate (≥ a chosen threshold)
+under Blender's bundled Python, failing the build below threshold — in-license, no hosted SaaS.
+**Depends on:** #0024 (CI, shipped). **Graduate after:** a spike confirms `coverage.py` runs under
+`blender --background` and a threshold is chosen.
+
+## B10 — Orchestrator writes the review verdict artifact (#0021's missing producer half)
+**User story:** As the orchestrator whose Stop hook blocks exit until `.review_state/verdict.txt` shows
+`PASS`/`EXIT_AUTHORIZED`, I need to actually WRITE that file at each gate, because today nothing does — so
+a legitimate PASS is re-injected until the `MAX_ITERS` backstop fires (wasteful, fails open, never a clean
+exit).
+**Desired outcome:** At each gate decision the orchestrator writes the verdict file with the real result;
+a test forces a PASS and asserts the loop exits on the first Stop (no `CAP_HIT`).
+**Depends on:** #0021 (hook, shipped). **Graduate after:** the verdict-write contract (path, format,
+when-cleared) is specified — note #0021 already defers a first-token/contains match for multi-line verdicts.
+
+## B11 — Reviewer-routing table in the orchestrator (inert specialized gates)
+**User story:** As a self-modifying system, I need the orchestrator to actually spawn the right
+specialized reviewer (`reviewer-skill`, `reviewer-agent`, `reviewer-documentation`, `reviewer-doc-currency`)
+per artifact type, because `agents/orchestrator.md` names none of them — DESIGN.md advertises them as live
+gates but a skill/agent/doc change currently falls through to the generic `reviewer-pr`.
+**Desired outcome:** `orchestrator.md` (and `.claude/commands/build.md`) carry the artifact→reviewer
+mapping from DESIGN.md as an executable step; a test asserts a skill diff routes to `reviewer-skill` and a
+currency-triggering diff routes to `reviewer-doc-currency`. Until then, DESIGN.md must mark those reviewers
+"selected via the mapping table, not yet routed."
+**Depends on:** #0016, #0026 (the reviewers exist). **Graduate after:** the mapping is specified and the
+not-yet-wired reviewers are enumerated.
+
+## B12 — GitHub issue tracker reconciliation (or declare BUILDLOG canonical)
+**User story:** As anyone reading the GitHub board, I need it to match reality, because every implemented
+and graduated issue is still OPEN, and #0019–#0026 (eight shipped issues) were never filed — the board
+misrepresents project state.
+**Desired outcome:** Either (a) the tracker is reconciled — shipped/graduated GH issues closed with a
+"see BUILDLOG" reference and #0019–#0026 filed — or (b) the repo declares BUILDLOG + `issues/` canonical
+and stops mirroring to GitHub. One source of truth, stated in DESIGN.md.
+**Depends on:** none. **Graduate after:** Trevor picks (a) reconcile or (b) abandon GitHub mirroring.
+
+## B13 — Per-add-on eval coverage (phyllotaxis + future add-ons)
+**User story:** As the eval suite, I need a case per shipped add-on, because `evals/cases.py` covers only
+the bevel add-on; the phyllotaxis add-on (#0025) shipped with zero eval coverage.
+**Desired outcome:** `evals/cases.py` includes a phyllotaxis case (e.g., count→vertex-count and
+golden-angle spacing), and the eval harness generalizes to N add-ons; CI runs them all.
+**Depends on:** #0023 (eval harness), #0025 (phyllotaxis). **Graduate after:** the multi-add-on eval shape
+is designed (one module per add-on vs a shared case list).
+
 ---
 
 *(The ready-vs-backlog tier itself is not a backlog item — it is small and ready, so it lives as a

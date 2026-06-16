@@ -90,11 +90,19 @@ what is a "nitpick."
 
 **Finalize:** update CLAUDE.md + DESIGN.md (model deviation, stop-condition, conventions); reviewed.
 
+## Status note (2026-06-16)
+This file froze at the MVP foundation. The post-MVP build (#0012–#0026) is recorded in
+`BUILDLOG.md`, which — with the `issues/` files and `DESIGN.md` "Delivered" list — is the
+authoritative state, not the lists below. The GitHub issue tracker is known-stale (see backlog
+B11). Items below are kept for historical context; strikethroughs mark what has since shipped.
+
 ## Out of scope (future issues)
 `reviewer-architecture` (even/odd routing — superseded by #0016, which builds it with trigger-based
-cadence instead); CI/coverage enforcement; Ralph-loop stop hooks; Blender add-on dev standards;
-resilience testing; GitHub remote push (needs repo name/URL from Trevor).
+cadence instead); ~~CI/coverage enforcement~~ (CI shipped #0024; coverage-% gate still open, B9);
+~~Ralph-loop stop hooks~~ (shipped #0021; verdict-producer wiring still open, B10); Blender add-on
+dev standards (B4); resilience testing (B7); ~~GitHub remote push~~ (shipped, B8).
 
 ## Open items
-- Open: GitHub repo name/URL — Trevor will provide; commits stay local until then.
-- Open: move spawned-agent model to Opus once proven?
+- ~~GitHub repo name/URL~~ — resolved; remote is github.com/TrevorHumble/Blender-Agentic-Developer.
+- ~~move spawned-agent model to Opus once proven?~~ — resolved by #0013 (reviewers on Opus; implementer
+  stays Sonnet).
