@@ -174,6 +174,16 @@ fix and re-review, then re-invoke the adjudicator. Genuinely inconsequential ite
 gate plus 3 further fix-and-re-review rounds — halts the segment; independent segments continue.
 a halt is not an acceptance; the work is not merged.
 
+**Stop-hook enforcement (#0021):** the Ralph loop is enforced by tooling, not by the model
+remembering to continue. `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook.
+On every Stop event the hook reads `stop_hook_active` (the Claude Code infinite-loop guard) and
+exits immediately when it is true. Otherwise it checks `.review_state/verdict.txt` for the two
+legitimate-exit tokens defined by #0020: `PASS` (written by a reviewer) and `EXIT_AUTHORIZED`
+(written by the severity adjudicator when every remaining defect is inconsequential). Any other
+state causes the hook to emit `{"decision":"block","reason":"..."}`, which re-injects the task
+and keeps the loop running. A counter-file iteration cap (`MAX_ITERS = 25`) writes `CAP_HIT` and
+allows the stop only as a last-resort backstop against a model that never writes a verdict.
+
 ## Standards
 
 ### User story

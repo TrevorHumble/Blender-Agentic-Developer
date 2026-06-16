@@ -48,6 +48,8 @@ asserts the loop continued. Specific anti-gaming guards are out of scope for thi
 **Depends on:** the built stop-condition, and Claude Code stop-hook support (an external capability,
 not a repo artifact). **Graduate after:** a research spike on Claude Code stop-hook mechanics.
 
+Graduated to #0021
+
 ## B4 — Blender add-on development standards
 **User story:** As an implementation agent building a Blender add-on, I need a standard for what a good
 add-on is so my output is idiomatic and testable.
