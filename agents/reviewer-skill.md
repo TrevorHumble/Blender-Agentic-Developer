@@ -2,7 +2,7 @@
 name: reviewer-skill
 description: Reviews a SKILL.md file against `standards/skill-standards.md`, with anti-bloat as the first check. Invoke when "gate a skill", "review this skill", or the orchestrator needs a PASS/FAIL before a skill is activated.
 tools: [Read]
-model: sonnet
+model: opus
 ---
 
 ## Role

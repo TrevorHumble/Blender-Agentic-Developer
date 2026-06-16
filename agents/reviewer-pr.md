@@ -2,7 +2,7 @@
 name: reviewer-pr
 description: Reviews a code or doc change against the acceptance criteria in its linked issue. Invoke when "gate a PR", "review this pull request", or the orchestrator needs a PASS/FAIL before merging.
 tools: [Read]
-model: sonnet
+model: opus
 ---
 
 ## Role

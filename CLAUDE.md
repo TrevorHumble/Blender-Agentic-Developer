@@ -22,7 +22,9 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 ## Model policy
 
 - Orchestrator: **Opus** (main loop).
-- All spawned agents (implementation, all reviewers): **Sonnet** (MVP build). Opus is the upgrade path when Sonnet proves insufficient.
+- Implementation agent: **Sonnet**.
+- Reviewers: **Opus**. Reviewers run on a different model from the implementer.
+- Non-reviewer spawned agents (researcher, etc.): **Sonnet**.
 - Every `model:` field in a `spawn` call must be set explicitly; never rely on defaults.
 
 ---

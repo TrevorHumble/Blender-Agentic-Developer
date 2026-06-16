@@ -22,10 +22,11 @@ The system cannot use its own committed skills before they exist. So the build i
 - No GitHub remote operations occur during the build. Commits stay local.
 
 ## Operating rules
-- **Models:** orchestrator = main Opus loop. **Every spawned agent is Sonnet** (research, impl,
-  review) per Trevor 2026-06-15. **Deviation:** DESIGN.md's roster lists reviewers as Opus — that is
-  the eventual target; the MVP build runs reviewers on Sonnet (weaker gate, revisit later). This
-  deviation is recorded here and folded into DESIGN.md at finalize.
+- **Models:** orchestrator = main Opus loop. Implementation agent and non-reviewer spawned agents
+  (researcher, etc.) = Sonnet. **Reviewers = Opus**, per issue #0013 (reviewer-independence,
+  2026-06-16): the MVP initially ran reviewers on Sonnet (weaker gate); #0013 resolved that
+  deviation — reviewers now run on Opus, a different model from the implementer, to eliminate
+  correlated blind spots. DESIGN.md and agent-standards.md reflect the final policy.
 - **Research-first, cheap.** Establish the standard from the best source — local prior art first,
   then the Blender RAG, then a quick (~few-minute) web check. Don't research what prior art answers.
 - **Steal good standards (prior art on this PC):**
@@ -42,10 +43,10 @@ The system cannot use its own committed skills before they exist. So the build i
 1. Orchestrator writes a short issue (`issues/NNNN-*.md`): user story, Given/When/Then criteria
    testable by an agent, implementation plan, dependencies, prior-art to steal, and the standard the
    artifact is reviewed against.
-2. Spawn a Sonnet adversarial **issue reviewer** (minimum context, de-biased). Fix every blocking
+2. Spawn an Opus adversarial **issue reviewer** (minimum context, de-biased). Fix every blocking
    defect and re-review with a fresh reviewer. **A FAIL is fixed, never overridden by the author.**
 3. Spawn a Sonnet **implementation agent** (full handoff: the issue + the prior-art files to read).
-4. Spawn a Sonnet adversarial **artifact reviewer** against the issue's criteria + the relevant
+4. Spawn an Opus adversarial **artifact reviewer** against the issue's criteria + the relevant
    standard. Fix and re-review until PASS.
 5. Commit the segment (direct git). Append a one-line BUILDLOG.md entry.
 

@@ -2,7 +2,7 @@
 name: reviewer-issue
 description: Reviews an issue file against `standards/issue-standards.md`. Invoke when "gate an issue", "review this issue", or the orchestrator needs a PASS/FAIL verdict before an issue unblocks downstream work.
 tools: [Read]
-model: sonnet
+model: opus
 ---
 
 ## Role

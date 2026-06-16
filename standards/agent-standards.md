@@ -32,6 +32,9 @@ Use the tier appropriate to the job:
 | Implementation, transformation | Sonnet |
 | Classification, routing, triage | Haiku |
 
+**Reviewer independence (implementation plan step 1 — choice recorded here):**
+Choice: implementer stays Sonnet; all reviewers run on Opus. Reviewers must run on a different model from the implementer. A reviewer running on the same model as the implementer inherits the implementer's correlated blind spots — the errors the author makes are the ones the reviewer misses. A weaker different model (Haiku) is unacceptable for a gate; Opus is required. The cost tradeoff of a more expensive reviewer is noted and deferred as a separate decision.
+
 A reviewer agent's prompt must carry no task-specific bias: it receives only the artifact under review and the relevant standard. The spawner must never state what the artifact is trying to accomplish, never express any expectation about the outcome, and never pre-answer anticipated objections.
 
 ---

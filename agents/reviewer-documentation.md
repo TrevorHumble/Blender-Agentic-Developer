@@ -2,7 +2,7 @@
 name: reviewer-documentation
 description: Reviews a documentation file against `standards/documentation-standards.md`. Invoke when "gate a doc", "review this documentation", "check documentation-standards compliance", or the orchestrator needs a PASS/FAIL before a doc is merged or published.
 tools: [Read]
-model: sonnet
+model: opus
 ---
 
 ## Role

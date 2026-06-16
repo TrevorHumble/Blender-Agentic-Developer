@@ -34,3 +34,7 @@ retyping the framing.
 
 ## Out of scope
 Registering a `.claude/agents/orchestrator.md` subagent; a remote/CI trigger.
+
+---
+
+**Superseded (2026-06-16) — model policy.** Plan step 3 ("spawned agents run on `Sonnet`") records the policy as it stood when this issue was built. The live policy is now reviewers-and-adjudicator-on-Opus (different model from the implementer); the implementation agent and other spawned agents stay Sonnet. See #0013 and `DESIGN.md` model-by-role. Appended, not a rewrite.

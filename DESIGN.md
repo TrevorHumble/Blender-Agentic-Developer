@@ -20,7 +20,7 @@ The system is self-maintaining: when a skill, agent, or standard needs to change
 
 **Adversarial-by-design.** Reviewers are instructed to find failure, not to confirm success. A passing review means nothing was left to object to, not that the reviewer was satisfied.
 
-**Model-by-role.** The orchestrator runs on Opus. All spawned agents — implementation and all reviewers — run on Sonnet (MVP build); Opus is the upgrade path when Sonnet proves insufficient. Haiku serves as the plan-clarity bar: if a plan would send a weak model off the rails, it is not ready to ship.
+**Model-by-role.** The orchestrator runs on Opus. The implementation agent runs on Sonnet. Reviewers run on a different model from the implementer. All reviewer agents run on Opus so they do not inherit the implementer's correlated blind spots. Non-reviewer spawned agents (researcher, etc.) run on Sonnet. Haiku serves as the plan-clarity bar: if a plan would send a weak model off the rails, it is not ready to ship.
 
 **Skill-bloat guard.** When updating a skill, apply the author's intent rather than transcribing the user's words. See the Skill-bloat problem section.
 
@@ -65,14 +65,14 @@ Names only. This document describes the structure; it does not create or modify 
 |---|---|
 | orchestrator | Opus |
 | implementation agent | Sonnet |
-| reviewer-issue | Sonnet |
-| reviewer-pr | Sonnet |
-| reviewer-skill | Sonnet |
-| reviewer-agent | Sonnet |
-| reviewer-documentation | Sonnet |
+| reviewer-issue | Opus |
+| reviewer-pr | Opus |
+| reviewer-skill | Opus |
+| reviewer-agent | Opus |
+| reviewer-documentation | Opus |
 | researcher | Sonnet |
 
-All spawned agents run Sonnet (MVP build); Opus is the upgrade path. `reviewer-architecture` is not in scope for MVP; see Deferred items.
+Reviewers run on Opus so they do not share the implementer's correlated blind spots. Non-reviewer spawned agents run on Sonnet. `reviewer-architecture` is not in scope for MVP; see Deferred items.
 
 ### Process flows
 

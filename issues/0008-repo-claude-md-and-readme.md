@@ -31,3 +31,7 @@ README.md:
 
 ## Constraints
 Markdown. Tight, no slop, no FINAL/LAST. Both conform to documentation-standards (consumer-POV user story line).
+
+---
+
+**Superseded (2026-06-16) — model policy.** Criterion 3 records the model policy as it stood when this issue was built (reviewers on Sonnet). The live policy is now reviewers-on-Opus, a different model from the implementer, per #0013; see `DESIGN.md` model-by-role. This note is appended, not a rewrite — the original criterion is the historical record of what gated the merge.

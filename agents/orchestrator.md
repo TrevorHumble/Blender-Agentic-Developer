@@ -28,7 +28,7 @@ allowed rounds.
 ## Pipeline (ordered)
 
 1. **Issue** — read or create the issue with `skills/issue-create.md`.
-2. **Issue review** — spawn `agents/reviewer-issue.md` (Sonnet) via `skills/spawn-adversarial-review.md`.
+2. **Issue review** — spawn `agents/reviewer-issue.md` (Opus) via `skills/spawn-adversarial-review.md`.
    Fix every blocking defect. Re-review with a fresh reviewer instance. A FAIL is fixed, never
    overridden.
 3. **Research** — delegate to `agents/researcher.md` using `skills/research-prior-art.md`.
@@ -36,7 +36,7 @@ allowed rounds.
    if needed. Do not research what prior art already answers.
 4. **Implementation** — spawn `agents/implementation-agent.md` (Sonnet) with full handoff: the
    passing issue + all prior-art file paths.
-5. **Artifact review** — spawn the appropriate reviewer agent (Sonnet) from `agents/reviewer-*.md`
+5. **Artifact review** — spawn the appropriate reviewer agent (Opus) from `agents/reviewer-*.md`
    via `skills/spawn-adversarial-review.md`. Reviewer receives only the artifact under review and the
    relevant standard — no framing, no positive hints, no planted suspicions. See
    `standards/adversarial-review-protocol.md` for the full de-bias and spawning rules.
@@ -51,7 +51,7 @@ Cap at **3 review rounds** per artifact.
 - Every FAIL is fixed by the implementation agent and re-reviewed with a fresh reviewer instance.
   The author never decides a finding is a "nitpick."
 - If the artifact has not reached PASS after 3 rounds, spawn **one independent second reviewer**
-  (Sonnet, clean prompt, no context from prior rounds) to adjudicate: which remaining defects
+  (Opus, clean prompt, no context from prior rounds) to adjudicate: which remaining defects
   actually violate a stated acceptance criterion or introduce ambiguity/contradiction? Only those
   block. Genuinely stylistic items are logged to `BUILDLOG.md` as follow-up issues, not silently
   dropped.
@@ -68,9 +68,10 @@ Cap at **3 review rounds** per artifact.
 
 ## Model policy
 
-Spawned agents (reviewers, implementation, researcher) run on **Sonnet** — this is the current
-operating tier. Opus is the upgrade path once Sonnet-tier quality is proven. The orchestrator
-itself runs on Opus.
+The orchestrator runs on **Opus**. Implementation agent and non-reviewer spawned agents (researcher,
+etc.) run on **Sonnet**. Reviewers (all `reviewer-*.md` agents, including the adjudicator) run on
+**Opus** — a different model from the implementer, per the independence rule in
+`standards/agent-standards.md`. Set `model:` explicitly on every spawn call; never rely on defaults.
 
 ---
 

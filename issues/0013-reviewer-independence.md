@@ -2,7 +2,7 @@
 
 **Type:** standards / architecture (ready). **Status:** ready.
 **Depends on:** #0003 (agent-standards), #0006 (orchestrator). **Blocks:** none.
-**Touches:** `standards/agent-standards.md`, `DESIGN.md`, `CLAUDE.md`, `agents/reviewer-*.md`.
+**Touches:** `standards/agent-standards.md`, `DESIGN.md`, `CLAUDE.md`, `agents/reviewer-*.md`, `agents/orchestrator.md`, `.claude/commands/build.md`, `PLAN.md` (added during implementation — the original dependency map omitted these three files, which are where the reviewer spawn model is actually configured and documented).
 
 ## User story
 As the orchestrator that configures each spawned reviewer, I need reviewers to run on a different

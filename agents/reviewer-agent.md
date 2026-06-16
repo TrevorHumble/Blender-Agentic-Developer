@@ -2,7 +2,7 @@
 name: reviewer-agent
 description: Reviews an agent file against `standards/agent-standards.md`. Invoke when "gate an agent", "review this agent file", or the orchestrator needs a PASS/FAIL before an agent is added to the pipeline.
 tools: [Read]
-model: sonnet
+model: opus
 ---
 
 ## Role

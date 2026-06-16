@@ -39,3 +39,7 @@ implementation-agent.md:
 
 ## Constraints
 Markdown + YAML. Tight, no slop, no FINAL/LAST. Each file self-contained and short.
+
+---
+
+**Superseded (2026-06-16) — model policy.** Criterion 5 records the model policy as it stood when this issue was built (reviewers on Sonnet, "opus is the upgrade path"). That upgrade happened: the live policy is reviewers-on-Opus, a different model from the implementer, per #0013; see `DESIGN.md` model-by-role. Appended, not a rewrite.
