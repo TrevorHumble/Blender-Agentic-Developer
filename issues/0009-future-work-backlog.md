@@ -141,6 +141,9 @@ misrepresents project state.
 and stops mirroring to GitHub. One source of truth, stated in DESIGN.md.
 **Depends on:** none. **Graduate after:** Trevor picks (a) reconcile or (b) abandon GitHub mirroring.
 
+Done — Trevor chose (b) via adversarial diagnosis (#0027): BUILDLOG + `issues/` declared canonical, the
+`gh issue create` path removed from `github-write.md`, and the GitHub board archived read-only. See #0027.
+
 ## B13 — Per-add-on eval coverage (phyllotaxis + future add-ons)
 **User story:** As the eval suite, I need a case per shipped add-on, because `evals/cases.py` covers only
 the bevel add-on; the phyllotaxis add-on (#0025) shipped with zero eval coverage.

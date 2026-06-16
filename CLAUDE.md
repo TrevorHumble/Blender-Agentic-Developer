@@ -94,6 +94,7 @@ Full conventions (the authoritative banned-word list, naming, anti-slop) live in
 - **Update this file** after every issue created and after every PR merged. Stale content degrades every subsequent decision.
 - **Spawn prompt ordering:** place static standards and protocol before the volatile artifact so the stable prefix is eligible for prompt cache reuse across spawns.
 - **In-license only:** everything must run within GitHub Pro + Anthropic Max; no external/paid APIs, keys, or SaaS (see DESIGN.md).
+- **Issue tracking is local:** `issues/` + `BUILDLOG.md` are canonical and are `not mirrored to GitHub`; the GitHub board is archived read-only. Never run `gh issue create` (see DESIGN.md "Source of truth").
 
 ---
 

@@ -93,8 +93,9 @@ what is a "nitpick."
 ## Status note (2026-06-16)
 This file froze at the MVP foundation. The post-MVP build (#0012–#0026) is recorded in
 `BUILDLOG.md`, which — with the `issues/` files and `DESIGN.md` "Delivered" list — is the
-authoritative state, not the lists below. The GitHub issue tracker is known-stale (see backlog
-B11). Items below are kept for historical context; strikethroughs mark what has since shipped.
+authoritative state, not the lists below. **GitHub issue tracking is abandoned** — the board is archived
+read-only and points back to BUILDLOG (see #0027 / backlog B12). Items below are kept for historical
+context; strikethroughs mark what has since shipped.
 
 ## Out of scope (future issues)
 `reviewer-architecture` (even/odd routing — superseded by #0016, which builds it with trigger-based

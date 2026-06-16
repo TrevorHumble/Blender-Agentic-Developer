@@ -1,15 +1,15 @@
 ---
 name: github-write
 description: >-
-  How to create GitHub issues, commit changes, and open PRs in this project
-  using git and the GitHub CLI. Triggers: "create an issue", "open a PR",
-  "commit this", "push to GitHub", any task that writes to git or GitHub for
-  the blender-orchestrator project.
+  How to commit changes and open PRs in this project using git and the GitHub
+  CLI. Triggers: "open a PR", "commit this", "push to GitHub", any task that
+  writes to git or GitHub for the blender-orchestrator project. Issues are NOT
+  written to GitHub — they live in issues/ (see DESIGN.md "Source of truth").
 ---
 
 # github-write
 
-## Critical: gh path and no remote
+## Critical: gh path and issue tracking
 
 `gh` is NOT on PATH. Always use the full path:
 
@@ -17,25 +17,11 @@ description: >-
 & "C:\Program Files\GitHub CLI\gh.exe" <subcommand>
 ```
 
-**No GitHub remote is configured yet.** Commits stay local. Do not attempt
-`gh pr create` or `git push` until a remote is added and confirmed.
-
-## Creating a GitHub issue
-
-```powershell
-& "C:\Program Files\GitHub CLI\gh.exe" issue create `
-  --title "Short title" `
-  --body @'
-## Summary
-...
-
-## Acceptance criteria
-- [ ] ...
-'@
-```
-
-If the repo has no remote yet, draft the issue body in `issues\NNNN-title.md`
-following the existing issue format, then create it when the remote is live.
+The remote is live (github.com/TrevorHumble/Blender-Agentic-Developer) — `git push`
+and `gh pr create` are available. **Issues are tracked locally in `issues/NNNN-title.md`,
+not on GitHub — do not create or sync GitHub issues.** Per DESIGN.md "Source of truth",
+`BUILDLOG.md` + `issues/` are canonical and the GitHub board is archived read-only. There is
+no `gh issue` write step in this project.
 
 ## Committing
 
@@ -50,7 +36,7 @@ Co-Authored-By: <committing model> <noreply@anthropic.com>
 
 Run `git status` before staging to avoid committing `.env` or large binaries.
 
-## Opening a PR (once remote exists)
+## Opening a PR
 
 ```powershell
 git push -u origin <branch>

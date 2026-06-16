@@ -329,6 +329,15 @@ Resolved (2026-06-15): how Trevor triggers a run — the `/build` slash command 
 
 The build was bootstrapped using the global `adversarial-agents` skill at `~/.claude/skills-cloud-staging/adversarial-agents` (not an in-repo file) as the held protocol, with direct git commits and direct spawning, until the committed standards and skills in this repo took over. PLAN.md has the segment-by-segment build sequence.
 
+## Source of truth
+
+Project state — what is built, what is in flight, what is deferred — is canonical in `BUILDLOG.md` and the `issues/` directory, and issue tracking is not mirrored to GitHub.
+`BUILDLOG.md` is append-only, written on every merge; the canonical set also includes this document's "Delivered" list.
+The GitHub repo exists for code `backup` and public `sharing` only. The board was a one-time snapshot (B8)
+that nothing maintained and is archived read-only, pointing here. Nothing in the pipeline writes GitHub
+issues; the system has no `gh issue create` path, so the tracker cannot re-drift. To learn the current
+state, read `BUILDLOG.md` and `issues/`, never the GitHub issue tab.
+
 ## Where the documentation lives
 
 **DESIGN.md** is the full evolving design and the source of truth for the system. When in doubt about how something works or why a decision was made, this is the document to consult. It grows with the system. On any conflict between DESIGN.md and CLAUDE.md, DESIGN.md governs and CLAUDE.md is corrected to match.
