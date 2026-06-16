@@ -1,5 +1,9 @@
 # Issue #0027 — Declare BUILDLOG + issues/ canonical; stop GitHub issue mirroring (graduates B12)
 
+**Superseded by #0028** (2026-06-16): Trevor reversed this decision — GitHub is now the single source of
+truth, with the board kept in sync by the pipeline. The reasoning below is retained as history; the
+"stop mirroring" policy it shipped is no longer in force.
+
 **Type:** ready. **Category:** standards / architecture / process.
 **Depends on:** #0019 (in-license), B8 (remote, done).
 **Blocks:** none.

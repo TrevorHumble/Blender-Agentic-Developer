@@ -78,6 +78,7 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 - `reviewer-design-philosophy.md` — design-philosophy gate; fires for every implementation artifact at PR-review time
 - `reviewer-doc-currency.md` — documentation-currency gate (agent exists; orchestrator wiring is a deferred follow-up to #0026, not yet live); judges a PR diff for currency-trigger violations (a file changed under a trigger without its matching front-door doc updated in the same diff)
 - `severity-adjudicator.md` — independent Opus agent that classifies remaining defects as consequential/inconsequential at the 3-round soft cap; sole authority to authorize exit
+- `reviewer-tracker-sync.md` — gate that FAILs a merge when the GitHub board is out of sync with the issue files / BUILDLOG (GitHub is the single source of truth)
 - `researcher.md` — time-boxed prior-art research
 
 ---
@@ -94,7 +95,7 @@ Full conventions (the authoritative banned-word list, naming, anti-slop) live in
 - **Update this file** after every issue created and after every PR merged. Stale content degrades every subsequent decision.
 - **Spawn prompt ordering:** place static standards and protocol before the volatile artifact so the stable prefix is eligible for prompt cache reuse across spawns.
 - **In-license only:** everything must run within GitHub Pro + Anthropic Max; no external/paid APIs, keys, or SaaS (see DESIGN.md).
-- **Issue tracking is local:** `issues/` + `BUILDLOG.md` are canonical and are `not mirrored to GitHub`; the GitHub board is archived read-only. Never run `gh issue create` (see DESIGN.md "Source of truth").
+- **GitHub is the single source of truth:** every task is a GitHub issue and the board is canonical for status; the pipeline keeps it in sync (open on issue-create, close on merge), and `reviewer-tracker-sync` FAILs a merge that leaves the board stale. The `issues/NNNN-*.md` files hold the detail; the GitHub issue owns the state (see DESIGN.md "Source of truth"). Supersedes #0027.
 
 ---
 

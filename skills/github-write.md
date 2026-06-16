@@ -1,15 +1,15 @@
 ---
 name: github-write
 description: >-
-  How to commit changes and open PRs in this project using git and the GitHub
-  CLI. Triggers: "open a PR", "commit this", "push to GitHub", any task that
-  writes to git or GitHub for the blender-orchestrator project. Issues are NOT
-  written to GitHub — they live in issues/ (see DESIGN.md "Source of truth").
+  How to create/update GitHub issues, commit changes, and open PRs in this
+  project using git and the GitHub CLI. Triggers: "create an issue", "open a PR",
+  "commit this", "push to GitHub", "close the issue", any task that writes to git
+  or GitHub for the blender-orchestrator project.
 ---
 
 # github-write
 
-## Critical: gh path and issue tracking
+## Critical: gh path
 
 `gh` is NOT on PATH. Always use the full path:
 
@@ -17,11 +17,32 @@ description: >-
 & "C:\Program Files\GitHub CLI\gh.exe" <subcommand>
 ```
 
-The remote is live (github.com/TrevorHumble/Blender-Agentic-Developer) — `git push`
-and `gh pr create` are available. **Issues are tracked locally in `issues/NNNN-title.md`,
-not on GitHub — do not create or sync GitHub issues.** Per DESIGN.md "Source of truth",
-`BUILDLOG.md` + `issues/` are canonical and the GitHub board is archived read-only. There is
-no `gh issue` write step in this project.
+The remote is live: github.com/TrevorHumble/Blender-Agentic-Developer.
+
+## GitHub is the single source of truth — keep issues in sync
+
+Every issue file `issues/NNNN-title.md` has a matching GitHub issue, and **the GitHub issue owns the
+status** (open/closed/labels). The file is the detail; the board is the state. The pipeline keeps them
+equal — see DESIGN.md "Source of truth". The sync rule:
+
+- **On issue creation** → `gh issue create` (title `#NNNN <short title>`, label by tier: `ready` /
+  `backlog` / `low priority`). The issue body can summarize and link the file.
+- **On PR merge / commit** → `gh issue close` the matching card, referencing the commit.
+- **On graduation/supersession** → update the card (re-label, or close with a pointer to the successor).
+- Never leave the board disagreeing with the issue files / BUILDLOG; `agents/reviewer-tracker-sync.md`
+  FAILs a merge that does.
+
+```powershell
+& "C:\Program Files\GitHub CLI\gh.exe" issue create `
+  --title "#NNNN Short title" `
+  --label "ready" `
+  --body @'
+Tracks issues/NNNN-title.md (canonical detail in the repo).
+
+## Summary
+...
+'@
+```
 
 ## Committing
 

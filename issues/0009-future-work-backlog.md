@@ -246,6 +246,9 @@ and stops mirroring to GitHub. One source of truth, stated in DESIGN.md.
 Done — Trevor chose (b) via adversarial diagnosis (#0027): BUILDLOG + `issues/` declared canonical, the
 `gh issue create` path removed from `github-write.md`, and the GitHub board archived read-only. See #0027.
 
+Update — **reversed by #0028** (2026-06-16): Trevor chose the opposite, GitHub as the single source of
+truth, with the board kept in sync by the pipeline (the maintaining step #0027 lacked). See #0028.
+
 ## B13 — Per-add-on eval coverage (phyllotaxis + future add-ons)
 **User story:** As the eval suite, I need a case per shipped add-on, because `evals/cases.py` covers only
 the bevel add-on; the phyllotaxis add-on (#0025) shipped with zero eval coverage.

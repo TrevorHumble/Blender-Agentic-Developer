@@ -27,7 +27,9 @@ allowed rounds.
 
 ## Pipeline (ordered)
 
-1. **Issue** — read or create the issue with `skills/issue-create.md`.
+1. **Issue** — read or create the issue with `skills/issue-create.md`. When a new issue file is created,
+   **open its GitHub issue** (`gh issue create`, label by tier) so the board reflects it from the start —
+   GitHub is the single source of truth (see `skills/github-write.md`).
 2. **Issue review** — spawn `agents/reviewer-issue.md` (Opus) via `skills/spawn-adversarial-review.md`.
    Fix every blocking defect. Re-review with a fresh reviewer instance. A FAIL is fixed, never
    overridden.
@@ -41,6 +43,10 @@ allowed rounds.
    relevant standard — no framing, no positive hints, no planted suspicions. See
    `standards/adversarial-review-protocol.md` for the full de-bias and spawning rules.
 6. **Commit** — direct `git commit` with a short message. Append a one-line entry to `BUILDLOG.md`.
+   Then **close the GitHub issue** for this work (`gh issue close`, referencing the commit) so the board
+   matches reality. Before declaring the segment done, spawn `agents/reviewer-tracker-sync.md` — it FAILs
+   if the board is out of sync with the issue files / BUILDLOG. The board is kept current at every
+   transition: issue created → `gh issue` opened; PR merged/committed → `gh issue` closed.
 
 ---
 

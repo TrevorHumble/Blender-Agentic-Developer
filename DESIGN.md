@@ -90,6 +90,8 @@ Reviewers run on Opus so they do not share the implementer's correlated blind sp
 
 `reviewer-doc-currency` is designed to fire at PR-review time on any PR whose diff touches a currency-triggering path (a new or moved top-level directory, a new agent/skill/standard, a renamed interface or path). It judges the diff — not a single file — and FAILs when a currency-triggering change landed without its matching front-door doc (`README.md` layout, `DESIGN.md` structure map, `CLAUDE.md` roster) updated in the same diff. It complements `reviewer-documentation`, which judges one doc against the standard and cannot see cross-file staleness. The agent exists; wiring it into the orchestrator's PR-review fan-out as a mandatory gate is tracked as a follow-up to #0026 and is not yet live.
 
+`reviewer-tracker-sync` fires at the end of a segment, after commit: it FAILs if the GitHub board is out of sync with the issue files / BUILDLOG (an issue shipped but still OPEN, an unfinished item CLOSED, an issue file with no card, or a label contradicting the declared tier). This is the maintaining gate that keeps GitHub-as-single-source-of-truth honest — the safeguard #0027's manual mirror lacked.
+
 A full-system architectural audit runs on every 5th counted BUILDLOG entry (committed-issue entries only; `[AUDIT]` entries excluded — see orchestrator.md): `reviewer-architecture` reviews DESIGN.md and the current agent/skill/standard inventory for drift, duplication, and contradiction.
 
 ### Process flows
@@ -331,12 +333,19 @@ The build was bootstrapped using the global `adversarial-agents` skill at `~/.cl
 
 ## Source of truth
 
-Project state — what is built, what is in flight, what is deferred — is canonical in `BUILDLOG.md` and the `issues/` directory, and issue tracking is not mirrored to GitHub.
-`BUILDLOG.md` is append-only, written on every merge; the canonical set also includes this document's "Delivered" list.
-The GitHub repo exists for code `backup` and public `sharing` only. The board was a one-time snapshot (B8)
-that nothing maintained and is archived read-only, pointing here. Nothing in the pipeline writes GitHub
-issues; the system has no `gh issue create` path, so the tracker cannot re-drift. To learn the current
-state, read `BUILDLOG.md` and `issues/`, never the GitHub issue tab.
+**GitHub is the single source of truth** for project state — every task is a GitHub issue, and its
+status (open/closed/labels) on the board is canonical. The board is **kept in sync by the pipeline**, not
+by anyone remembering to update it: the orchestrator opens a GitHub issue when an issue file is created
+and closes it when the PR merges, and `agents/reviewer-tracker-sync.md` FAILs any merge that leaves the
+board disagreeing with reality. This supersedes #0027 (which had declared BUILDLOG canonical and stopped
+mirroring — reversed because a single, always-current board is what the operator needs).
+
+**File model — files = detail, issue = status.** The rich `issues/NNNN-*.md` files stay in the repo: they
+hold the full acceptance criteria and plan, are version-controlled and diffable, and are what the reviewer
+agents read. The matching GitHub issue owns the *status*. The discipline that prevents the drift that
+killed the old manual mirror: a file describes the work; the GitHub issue owns the state; the pipeline
+keeps them equal, and the sync gate enforces it. `BUILDLOG.md` remains the append-only history of merges;
+it is a log, not the task tracker.
 
 ## Where the documentation lives
 
