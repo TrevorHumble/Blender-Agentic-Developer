@@ -32,9 +32,15 @@ The system is self-maintaining: when a skill, agent, or standard needs to change
 skills/
 agents/
 standards/
+addons/                            — Blender add-ons (bevel_bezier_corners.py, phyllotaxis.py)
+tests/                             — dependency-free headless test harness (run_pure.py, run_headless.py, run_tests.ps1)
+evals/                             — deterministic geometry + Claude-as-judge eval harness (cases.py, run_evals.py, judge.md)
 issues/
-config/         — repo-level config (github.txt holds the remote URL)
-.claude/commands/build.md  — /build slash command that triggers a pipeline run
+config/                            — repo-level config (github.txt holds the remote URL)
+.github/workflows/ci.yml           — CI pipeline; runs on every push and PR
+.claude/commands/build.md          — /build slash command that triggers a pipeline run
+.claude/hooks/review-gate.ps1      — Stop hook enforcing Ralph-loop verdict gate
+.claude/settings.json              — Claude Code settings (hook registration)
 PLAN.md         — segment-by-segment build sequence
 BUILDLOG.md     — one-line entries appended after each commit or halt
 README.md
@@ -44,7 +50,7 @@ DESIGN.md
 
 Names only. This document describes the structure; it does not create or modify those files.
 
-## MVP scope
+## Current scope
 
 ### Skills
 
@@ -58,6 +64,7 @@ Names only. This document describes the structure; it does not create or modify 
 - `update-claude-md` — update CLAUDE.md after issues and PRs
 - `research-prior-art` — time-boxed prior-art lookup before drafting
 - `write-documentation` — write or update documentation through the PR pipeline
+- `capture-system-defect` — file a defect found in the repo's own machinery as an issue and route it through the pipeline
 
 ### Agent roster
 
@@ -103,6 +110,7 @@ For a PR review the "single relevant standard" is the linked issue's `## Accepta
 | Skill | `standards/skill-standards.md` |
 | Agent | `standards/agent-standards.md` |
 | Doc | `standards/documentation-standards.md` |
+| Implementation artifact (design-philosophy gate) | `standards/design-philosophy.md` |
 
 ### Spawner constraints
 
@@ -234,14 +242,17 @@ When public-facing behavior changes, update the README in the same PR. When oper
 
 ## Deferred items
 
-The following are not in MVP scope. Each becomes a future issue when the system is ready for it.
+The following have not yet shipped. Each becomes a future issue when the system is ready for it.
 
-- CI/coverage enforcement — automated enforcement of the ≥ 80% coverage standard on every PR. Currently manual.
-- Ralph-loop stop hooks — automated hooks that detect a looping review and escalate or halt rather than continuing indefinitely.
 - Documentation-enforcement agent — checks that CLAUDE.md and README are updated when required triggers fire.
 - Comment-review agent — enforces the why-not-what, one-line, anti-slop comment standard.
 - Blender add-on development standards — a `standards/` document defining bpy patterns, Eevee Next conventions, and API version constraints.
 - Resilience and reliability testing — testing the orchestrator's behavior under failed tool calls, bad reviewer outputs, and looping conditions.
+
+### Delivered (no longer deferred)
+
+- CI/coverage enforcement (#0024) — `.github/workflows/ci.yml` runs the full test + eval suite on every push and PR via GitHub Actions.
+- Ralph-loop stop hooks (#0021) — `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook; enforces the verdict gate on every Stop event.
 
 ## System-level change definition
 

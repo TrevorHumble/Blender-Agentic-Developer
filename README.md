@@ -10,9 +10,14 @@ This repo is a Claude Code orchestrator agent that builds and maintains Blender 
 
 | Path | Purpose |
 |---|---|
-| `standards/` | Authoring and review standards (adversarial protocol, documentation, skill, agent, issue) |
+| `standards/` | Authoring and review standards (adversarial protocol, documentation, skill, agent, issue, design-philosophy) |
 | `skills/` | Orchestrator action skills (issue-create, spawn-adversarial-review, github-write, blender-rag, etc.) |
-| `agents/` | Agent definitions (orchestrator, implementation-agent, reviewers, researcher) |
+| `agents/` | Agent definitions (orchestrator, implementation-agent, reviewers, researcher, severity-adjudicator) |
+| `addons/` | Blender add-ons: `bevel_bezier_corners.py`, `phyllotaxis.py` |
+| `tests/` | Dependency-free headless test harness (`run_pure.py`, `run_headless.py`, `run_tests.ps1`) |
+| `evals/` | Deterministic geometry + Claude-as-judge eval harness (`cases.py`, `run_evals.py`, `judge.md`) |
+| `.github/workflows/` | CI pipeline (`ci.yml` — runs on every push and PR) |
+| `config/` | Repo-level config (`github.txt` holds the remote URL) |
 | `issues/` | Filed issues (`NNNN-*.md`) |
 | `DESIGN.md` | Architecture decisions, rationale, lifecycle definitions |
 | `PLAN.md` | Build plan: segment order, model policy, bootstrap protocol |
@@ -23,4 +28,4 @@ This repo is a Claude Code orchestrator agent that builds and maintains Blender 
 
 ## Build status
 
-MVP foundation committed locally. No GitHub remote is configured yet — Trevor will provide the repo name and URL.
+Live at [github.com/TrevorHumble/Blender-Agentic-Developer](https://github.com/TrevorHumble/Blender-Agentic-Developer). CI runs on every push and PR via GitHub Actions; two add-ons shipped (`bevel_bezier_corners`, `phyllotaxis`); headless test harness and eval harness passing.

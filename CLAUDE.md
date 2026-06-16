@@ -55,6 +55,7 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 - `skill-standards.md` — skill authoring rules, bloat guard
 - `agent-standards.md` — single responsibility, least-privilege, input/output contract
 - `issue-standards.md` — user story, Given/When/Then criteria, Haiku bar
+- `design-philosophy.md` — Ousterhout principles and red flags; gates every implementation artifact via reviewer-design-philosophy
 
 ### Skills (`skills/`)
 - `issue-create.md` — draft and file issues
@@ -67,6 +68,7 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 - `research-prior-art.md` — prior-art lookup before drafting
 - `blender-rag.md` — retrieve Blender bpy API docs
 - `blender-connect.md` — connect to a running Blender instance
+- `capture-system-defect.md` — file a system defect found mid-run as an issue and route it through the pipeline
 
 ### Agents (`agents/`)
 - `orchestrator.md` — this loop's behavioral spec
@@ -74,6 +76,7 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 - `reviewer-issue.md`, `reviewer-pr.md`, `reviewer-skill.md`, `reviewer-agent.md`, `reviewer-documentation.md` — adversarial reviewers
 - `reviewer-architecture.md` — architectural gate; fires for issues that are a system-level change or adds a new component, and on every 5th counted BUILDLOG entry (committed-issue entries only; `[AUDIT]` entries excluded — see orchestrator.md)
 - `reviewer-design-philosophy.md` — design-philosophy gate; fires for every implementation artifact at PR-review time
+- `severity-adjudicator.md` — independent Opus agent that classifies remaining defects as consequential/inconsequential at the 3-round soft cap; sole authority to authorize exit
 - `researcher.md` — time-boxed prior-art research
 
 ---
