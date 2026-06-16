@@ -255,6 +255,19 @@ CI runs on GitHub Actions under `GitHub Pro` on the public repo (unlimited minut
 
 Evals are `Claude-as-judge` (the Opus reviewer agents) + local pytest/coverage.py + headless Blender. Any dependency needing a non-Anthropic key or a hosted account is out of license by definition.
 
+## CI
+
+`.github/workflows/ci.yml` runs on every push and pull request via GitHub Actions on the public repo
+(GitHub Pro, unlimited minutes). The job installs a free Blender 5.1 Linux build into the runner and
+executes all three gates in order:
+
+1. `tests/run_pure.py` — plain Python, no Blender runtime required.
+2. `tests/run_headless.py` — headless operator test under `blender --background --python-exit-code 1`.
+3. `evals/run_evals.py` — deterministic geometry eval suite, same flags.
+
+Each step fails the job on a non-zero exit (default shell behaviour). In-license: free Blender
+download from `download.blender.org`; no Codecov, Coveralls, or any hosted coverage/eval SaaS.
+
 ## Evals
 
 The eval harness (`evals/run_evals.py`) scores the add-on against a graded suite — two complementary modes, both in-license.

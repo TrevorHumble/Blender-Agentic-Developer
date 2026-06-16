@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pure geometry test (bpy-free)
+        run: python tests/run_pure.py
+
+      - name: Install Blender runtime deps
+        run: sudo apt-get update && sudo apt-get install -y libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libsm6 libgl1
+
+      - name: Download Blender 5.1
+        run: |
+          curl -sSL https://download.blender.org/release/Blender5.1/blender-5.1.0-linux-x64.tar.xz -o blender.tar.xz
+          mkdir -p blender
+          tar -xf blender.tar.xz -C blender --strip-components=1
+          ./blender/blender --version
+
+      - name: Headless operator test
+        run: ./blender/blender --background --factory-startup --python-exit-code 1 --python tests/run_headless.py
+
+      - name: Eval suite
+        run: ./blender/blender --background --factory-startup --python-exit-code 1 --python evals/run_evals.py

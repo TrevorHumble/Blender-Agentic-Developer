@@ -39,6 +39,8 @@ every commit and block the commit on failure.
 **Depends on:** the first Python code artifacts existing. **Graduate after:** a research spike on the
 Python/Blender add-on toolchain, and headless harness ready (#0022).
 
+Graduated to #0024
+
 ## B3 — Ralph-loop stop-hook automation
 **User story:** As Trevor, who needs the review loop to run to completion autonomously, I need it
 enforced by a stop hook rather than by manual discipline.
