@@ -87,8 +87,9 @@ segments. The author never decides what is a "nitpick."
 **Finalize:** update CLAUDE.md + DESIGN.md (model deviation, stop-condition, conventions); reviewed.
 
 ## Out of scope (future issues)
-`reviewer-architecture` (even/odd routing); CI/coverage enforcement; Ralph-loop stop hooks; Blender
-add-on dev standards; resilience testing; GitHub remote push (needs repo name/URL from Trevor).
+`reviewer-architecture` (even/odd routing — superseded by #0016, which builds it with trigger-based
+cadence instead); CI/coverage enforcement; Ralph-loop stop hooks; Blender add-on dev standards;
+resilience testing; GitHub remote push (needs repo name/URL from Trevor).
 
 ## Open items
 - Open: GitHub repo name/URL — Trevor will provide; commits stay local until then.

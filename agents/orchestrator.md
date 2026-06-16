@@ -83,6 +83,18 @@ resort when local sources do not answer the question.
 
 ---
 
+## Review cadence — additive gates
+
+These gates are additive to the existing `reviewer-issue` / `reviewer-pr` pipeline. They do not replace any existing step.
+
+**Architectural gate (issue-review time):** When an issue is a system-level change or adds a new component, spawn `agents/reviewer-architecture.md` (Opus) after `reviewer-issue` passes and before implementation begins. A FAIL from `reviewer-architecture` is fixed and re-reviewed; it is never overridden. A system-level change is any edit that touches the protocol, a standard, or the orchestrator/reviewer agent specs (examples: modifying `standards/adversarial-review-protocol.md`, editing `agents/orchestrator.md`, adding a new reviewer agent).
+
+**Design-philosophy gate (PR-review time):** An implementation artifact is code, an agent spec, a skill, or a standard. A doc-only or typo-only change is NOT an implementation artifact and skips this gate. Spawn `agents/reviewer-design-philosophy.md` (Opus) for every implementation artifact at PR-review time, after `reviewer-pr` returns PASS. A FAIL is fixed and re-reviewed; it is never overridden.
+
+**Periodic full-system architectural audit:** Starting from the first BUILDLOG entry after #0016 merges, count each committed-issue entry appended to `BUILDLOG.md` (one entry is appended per merge; audit entries, which are prefixed `[AUDIT]`, are not counted). On every 5th counted entry, run a `full-system architectural audit` over `DESIGN.md` and the `agents/`, `skills/`, and `standards/` inventory, and append the outcome as an `[AUDIT]`-prefixed BUILDLOG line (excluded from the count).
+
+---
+
 ## Constraints
 
 - The orchestrator does not write or approve its own **deliverable** artifacts (skills, agents,

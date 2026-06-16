@@ -29,6 +29,8 @@ component. (Even/odd routing is a mechanism decided during graduation, not part 
 **Depends on:** a stable `DESIGN.md`. **Graduate after:** a research spike defines which architectural-fit
 checks are objectively testable.
 
+**Superseded by #0016** (regular architectural + design-philosophy review, trigger-based cadence).
+
 ## B2 — CI/CD enforcement
 **User story:** As Trevor, who cannot personally audit every change, I need quality enforced
 automatically rather than by an agent remembering to check.

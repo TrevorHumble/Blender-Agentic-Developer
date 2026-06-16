@@ -70,9 +70,17 @@ Names only. This document describes the structure; it does not create or modify 
 | reviewer-skill | Opus |
 | reviewer-agent | Opus |
 | reviewer-documentation | Opus |
+| reviewer-architecture | Opus |
+| reviewer-design-philosophy | Opus |
 | researcher | Sonnet |
 
-Reviewers run on Opus so they do not share the implementer's correlated blind spots. Non-reviewer spawned agents run on Sonnet. `reviewer-architecture` is not in scope for MVP; see Deferred items.
+Reviewers run on Opus so they do not share the implementer's correlated blind spots. Non-reviewer spawned agents run on Sonnet.
+
+`reviewer-architecture` gates issues that are a system-level change or adds a new component. It fires at issue-review time, after `reviewer-issue` passes.
+
+`reviewer-design-philosophy` gates every implementation artifact at PR-review time. It fires after `reviewer-pr` returns PASS. This gate adds a reviewer spawn on every qualifying PR — a deliberate, accepted cost for design quality.
+
+A full-system architectural audit runs on every 5th counted BUILDLOG entry (committed-issue entries only; `[AUDIT]` entries excluded — see orchestrator.md): `reviewer-architecture` reviews DESIGN.md and the current agent/skill/standard inventory for drift, duplication, and contradiction.
 
 ### Process flows
 
@@ -206,7 +214,6 @@ When public-facing behavior changes, update the README in the same PR. When oper
 
 The following are not in MVP scope. Each becomes a future issue when the system is ready for it.
 
-- `reviewer-architecture` — even/odd architecture-review routing: every other architecture-touching PR is routed through an architecture reviewer before the standard reviewer-pr. Deferred because the architecture is not stable enough to review against.
 - CI/coverage enforcement — automated enforcement of the ≥ 80% coverage standard on every PR. Currently manual.
 - Ralph-loop stop hooks — automated hooks that detect a looping review and escalate or halt rather than continuing indefinitely.
 - Documentation-enforcement agent — checks that CLAUDE.md and README are updated when required triggers fire.

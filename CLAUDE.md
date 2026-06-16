@@ -64,6 +64,8 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 - `orchestrator.md` — this loop's behavioral spec
 - `implementation-agent.md` — Sonnet implementer
 - `reviewer-issue.md`, `reviewer-pr.md`, `reviewer-skill.md`, `reviewer-agent.md`, `reviewer-documentation.md` — adversarial reviewers
+- `reviewer-architecture.md` — architectural gate; fires for issues that are a system-level change or adds a new component, and on every 5th counted BUILDLOG entry (committed-issue entries only; `[AUDIT]` entries excluded — see orchestrator.md)
+- `reviewer-design-philosophy.md` — design-philosophy gate; fires for every implementation artifact at PR-review time
 - `researcher.md` — time-boxed prior-art research
 
 ---
