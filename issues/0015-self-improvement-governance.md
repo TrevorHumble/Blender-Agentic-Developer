@@ -64,7 +64,8 @@ Given/When/Then frame names the artifact, the grep, and the location.
    beginning with `- ` that includes the literal string `do not silently work around`, and a line
    beginning with `- ` that includes the literal string `two independent reviewers`.
 8. **Given** `CLAUDE.md` after implementation, **When** a reader greps it, **Then** it contains the
-   literal string `the 3-round cap and the adjudicator still apply`.
+   literal string `the soft cap and the severity adjudicator still apply` (reconciled with #0020 — the
+   two-reviewer bar is additive on top of the soft cap + severity gate, not the old hard cap).
 
 ## Implementation plan
 1. **Capture protocol in `orchestrator.md`.** Add a `## Capturing a system defect mid-run` section:
@@ -81,7 +82,7 @@ Given/When/Then frame names the artifact, the grep, and the location.
 4. **Define `system-level change` in `DESIGN.md`** with the enumerated artifact list and the explicit
    carve-out that ordinary add-ons / non-governing skills are single-reviewer.
 5. **`CLAUDE.md` operating rules.** Add the two one-line rules (capture; two-reviewer bar), the literal
-   `the 3-round cap and the adjudicator still apply`, and keep the stop-condition cross-reference intact.
+   `the soft cap and the severity adjudicator still apply`, and keep the stop-condition cross-reference intact.
 
 (Gating policy is not an implementation step — see the self-binding note near the top for how this issue
 itself is reviewed.)
