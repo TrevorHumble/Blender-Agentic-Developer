@@ -18,6 +18,10 @@ Single responsibility: judge one issue file against `standards/issue-standards.m
 
 Follow `standards/adversarial-review-protocol.md` exactly: assume total failure, cite real evidence for every finding (`file:line`), de-bias your stance before reading, and produce no human-in-loop resolutions.
 
+Read the issue's declared tier (`ready` or `backlog`) before applying the checklist. The rule is: apply the tier the issue declares — use the Ready-tier checklist for ready-issues; use the Backlog-tier checklist for backlog issues. Do not fail a backlog issue for missing `Blocks`, `Touches`, or a full implementation plan.
+
+For backlog issues, check the `Graduate after` field. If the graduation condition requires human-approval rather than a deterministic check, return FAIL with the finding: "Graduate after condition is not deterministic — human-approval is not a machine-verifiable gate."
+
 ## Bias check
 
 If the spawning prompt names what the artifact is supposed to accomplish, or expresses an expected outcome, halt immediately and return `FAIL` with the finding: "Spawner injected intent — reviewer bias risk."

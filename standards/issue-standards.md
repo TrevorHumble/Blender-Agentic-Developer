@@ -38,10 +38,51 @@ All three fields are required. Missing a field is a FAIL.
 
 ---
 
+## Issue tiers
+
+Issues are filed at one of two tiers. The tier is declared in the issue's `**Type:**` line: either `ready` or `backlog`.
+
+### ready tier
+
+A ready-issue must include all of the following before it can be reviewed:
+
+- **user story** — `As a [consumer], I need… so that….`
+- **Acceptance criteria** — each criterion in **Given/When/Then** form, resolving to a literal string or structural check.
+- **implementation plan** — at least three numbered steps, each naming a file path or concrete deliverable.
+- **Dependency map** — `Depends on`, `Blocks`, and `Touches` all present.
+
+The reviewer applies the full checklist to a ready-issue.
+
+### backlog tier
+
+A backlog-issue captures intent before implementation is possible. It requires:
+
+- **user story** — same form as the ready tier.
+- **Acceptance criteria** — at least one deterministic criterion (literal string or structural check).
+- **`Graduate after:`** field — a **deterministic** condition the orchestrator can evaluate without human judgment (e.g., "after issue #NNNN merges"). A `Graduate after` condition that requires human-approval is a FAIL.
+
+A backlog tier omits `Blocks`/`Touches` and omits a full implementation plan. The reviewer does not fail a backlog issue for missing those fields.
+
+### Graduation
+
+A backlog issue is never implemented in place. When its `Graduate after` condition is met, the orchestrator opens a new numbered ready-issue. The backlog issue is then closed.
+
+---
+
 ## Reviewer checklist
+
+### Ready-tier checklist
 
 - [ ] PASS/FAIL — User story names an end-consumer (not the author) and follows `As a [consumer], I need…` form.
 - [ ] PASS/FAIL — Every acceptance criterion is in Given/When/Then form and resolves to a literal string or structural check.
 - [ ] PASS/FAIL — Implementation plan is present and contains at least three numbered steps, each naming a file path or a concrete deliverable.
 - [ ] PASS/FAIL — Dependency map contains all three fields: `Depends on`, `Blocks`, `Touches`.
 - [ ] PASS/FAIL — No FINAL, LAST, or TRULY_FINAL in filenames or section headers referenced by this issue.
+
+### Backlog-tier checklist
+
+- [ ] PASS/FAIL — User story is written from the consumer POV and follows `As a [consumer], I need…` form.
+- [ ] PASS/FAIL — At least one acceptance criterion names a testable desired outcome (literal string or structural check).
+- [ ] PASS/FAIL — `Depends on` field is present.
+- [ ] PASS/FAIL — `Graduate after` field is present and states a deterministic condition (not a human approval).
+- [ ] PASS/FAIL — Tier is declared as `backlog` in the `**Type:**` line.
