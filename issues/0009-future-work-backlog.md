@@ -60,7 +60,7 @@ add-on is so my output is idiomatic and testable.
 **Depends on:** the Blender RAG (`C:\Users\thumb\BlenderRag`). **Graduate after:** a RAG + web research
 spike on Blender 5.x add-on best practices.
 
-## B5 — documentation-enforcement agent
+## B5 — documentation-currency reviewer agent
 **User story:** As Trevor, whose `DESIGN.md` drifted during this very build, I need an agent that catches
 stale docs so the drift does not recur.
 **Desired outcome:** A documentation-currency reviewer agent exists that, given a PR diff and
@@ -68,6 +68,8 @@ stale docs so the drift does not recur.
 trigger was changed without its corresponding doc updated.
 **Depends on:** `standards/documentation-standards.md` (built). **Graduate after:** the currency-check
 rule set is designed.
+
+Graduated to #0026
 
 ## B6 — comment-review agent
 **User story:** As a reviewer, I need code comments held to the why-not-what, one-line, anti-slop standard.

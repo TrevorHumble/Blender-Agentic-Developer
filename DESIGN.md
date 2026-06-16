@@ -79,6 +79,7 @@ Names only. This document describes the structure; it does not create or modify 
 | reviewer-documentation | Opus |
 | reviewer-architecture | Opus |
 | reviewer-design-philosophy | Opus |
+| reviewer-doc-currency | Opus |
 | researcher | Sonnet |
 
 Reviewers run on Opus so they do not share the implementer's correlated blind spots. Non-reviewer spawned agents run on Sonnet.
@@ -86,6 +87,8 @@ Reviewers run on Opus so they do not share the implementer's correlated blind sp
 `reviewer-architecture` gates issues that are a system-level change or adds a new component. It fires at issue-review time, after `reviewer-issue` passes.
 
 `reviewer-design-philosophy` gates every implementation artifact at PR-review time. It fires after `reviewer-pr` returns PASS. This gate adds a reviewer spawn on every qualifying PR — a deliberate, accepted cost for design quality.
+
+`reviewer-doc-currency` is designed to fire at PR-review time on any PR whose diff touches a currency-triggering path (a new or moved top-level directory, a new agent/skill/standard, a renamed interface or path). It judges the diff — not a single file — and FAILs when a currency-triggering change landed without its matching front-door doc (`README.md` layout, `DESIGN.md` structure map, `CLAUDE.md` roster) updated in the same diff. It complements `reviewer-documentation`, which judges one doc against the standard and cannot see cross-file staleness. The agent exists; wiring it into the orchestrator's PR-review fan-out as a mandatory gate is tracked as a follow-up to #0026 and is not yet live.
 
 A full-system architectural audit runs on every 5th counted BUILDLOG entry (committed-issue entries only; `[AUDIT]` entries excluded — see orchestrator.md): `reviewer-architecture` reviews DESIGN.md and the current agent/skill/standard inventory for drift, duplication, and contradiction.
 
