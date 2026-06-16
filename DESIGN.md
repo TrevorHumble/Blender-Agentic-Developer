@@ -255,6 +255,16 @@ CI runs on GitHub Actions under `GitHub Pro` on the public repo (unlimited minut
 
 Evals are `Claude-as-judge` (the Opus reviewer agents) + local pytest/coverage.py + headless Blender. Any dependency needing a non-Anthropic key or a hosted account is out of license by definition.
 
+## Evals
+
+The eval harness (`evals/run_evals.py`) scores the add-on against a graded suite — two complementary modes, both in-license.
+
+**Deterministic geometry evals** — run headless via `blender --background --python evals/run_evals.py`. Builds five input curves, applies the operator, asserts measurable properties (BEZIER type, point counts, endpoint positions, colinear-vertex handling, clamped-radius bounds). Prints `[PASS]`/`[FAIL]` per case and a final `EVAL SCORE: <passed>/<total>` line. Exits 1 if any case fails.
+
+**Claude-as-judge eval** — after the deterministic suite passes, the orchestrator captures a viewport screenshot via `get_viewport_screenshot` and hands it to an Opus agent with a written rubric (see `evals/judge.md`). The judge returns `PASS`/`FAIL` with cited reasons. `Claude-as-judge` runs inside the Anthropic Max subscription — no external eval service.
+
+Cases are defined in `evals/cases.py`. The rubric and workflow for the visual pass are in `evals/judge.md`. Both modes are dependency-free (no pytest, no pip).
+
 ## Testing
 
 The harness is dependency-free — no pytest, no pip install. Tests are split by runtime requirement:
