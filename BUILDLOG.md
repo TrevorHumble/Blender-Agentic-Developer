@@ -18,3 +18,5 @@ Append-only record of the autonomous MVP build. Newest at the bottom.
 - 2026-06-15 — Layer E (#0006): orchestrator + implementation-agent. Review FAIL (adjudicator reclassification loophole) → fixed → PASS. Committed `1a0a894`.
 - 2026-06-15 — Layer F (#0007): Blender + ops skills. Review FAIL (wrapper drift; bash here-docs in PowerShell file) → fixed → PASS. Committed `8baabf9`.
 - 2026-06-15 — Finalize (#0008): repo CLAUDE.md + README. Review FAIL (banned-word list restated) → fixed. MVP foundation complete.
+- 2026-06-15 — Doc-state audit: DESIGN.md had drifted (written pre-build). 8 drifts fixed → verified PASS. Committed `e5f8130`.
+- 2026-06-15 — Future work (#0009 backlog + #0010 ready-issue): authored, run through reviewer-issue. FAIL twice (human-approval graduation, producer-POV stories, untestable outcomes, interpretive criteria) → fixed → round-3 PASS. Backlog/ready tier distinction established and honored.
