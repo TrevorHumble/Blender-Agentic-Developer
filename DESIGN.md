@@ -33,6 +33,10 @@ skills/
 agents/
 standards/
 issues/
+config/         — repo-level config (github.txt holds the remote URL)
+.claude/commands/build.md  — /build slash command that triggers a pipeline run
+PLAN.md         — segment-by-segment build sequence
+BUILDLOG.md     — one-line entries appended after each commit or halt
 README.md
 CLAUDE.md
 DESIGN.md
@@ -80,18 +84,28 @@ All spawned agents run Sonnet (MVP build); Opus is the upgrade path. `reviewer-a
 
 ### Minimum context
 
-The reviewer receives only the artifact under review plus the single relevant standard. Nothing else is provided.
+The reviewer receives only the artifact under review plus the single relevant standard. Nothing else is provided. "No framing" means the spawner adds no editorializing or expectation — it does not mean withholding the standard the reviewer requires.
+
+For a PR review the "single relevant standard" is the linked issue's `## Acceptance criteria` section (per `agents/reviewer-pr.md`), not a separate standards file. Artifact-to-standard mapping:
+
+| Artifact | Standard the reviewer receives |
+|---|---|
+| Issue | `standards/issue-standards.md` |
+| PR diff | The linked issue's `## Acceptance criteria` section |
+| Skill | `standards/skill-standards.md` |
+| Agent | `standards/agent-standards.md` |
+| Doc | `standards/documentation-standards.md` |
 
 ### Spawner constraints
 
 The spawner must never:
 
-- never state what the artifact is trying to accomplish
-- never express any expectation about the outcome
-- never pre-answer anticipated objections
-- never summarize the artifact before handing it over
-- never identify the author
-- never use pass-leaning language such as "just verify" or "looks good, please confirm"
+- state what the artifact is trying to accomplish
+- express any expectation about the outcome
+- pre-answer anticipated objections
+- summarize the artifact before handing it over
+- identify the author
+- use pass-leaning language such as "just verify" or "looks good, please confirm"
 
 ### Canonical reviewer framing
 
@@ -138,7 +152,7 @@ Updates to skills or agents follow the same pipeline. The artifact goes to revie
 
 An external evaluator (a fresh reviewer agent) checks the work and re-injects the task until it passes. Self-assessment is not trusted — the agent that produced the artifact does not evaluate it.
 
-**Stop condition (as-built):** a FAIL is fixed, never overridden by the author. Cap is 3 review rounds per artifact. After 3 rounds without PASS, an independent adjudicator is spawned; it must cite the exact acceptance criterion or protocol clause for each finding it retains as blocking, or downgrade it. Genuinely stylistic issues are logged to `BUILDLOG.md` as follow-up items — not silently dropped and not declared nitpicks by the author. If unresolved after adjudication, that segment halts and independent segments continue.
+**Stop condition (as-built):** a FAIL is fixed, never overridden by the author. Cap is 3 review rounds per artifact. After 3 rounds without PASS, an independent adjudicator is spawned (a fresh reviewer-class agent given adjudicator instructions — not a separate committed agents/adjudicator.md file). For every finding the adjudicator retains as blocking, it must cite — by exact text — either the specific acceptance criterion it violates or the specific clause of `standards/adversarial-review-protocol.md` it contravenes. Reclassifying a finding as non-blocking or stylistic likewise requires an explicit textual basis from one of those two sources; no finding is cleared, downgraded, or retained on bare assertion. Genuinely stylistic issues are logged to `BUILDLOG.md` as follow-up items — not silently dropped and not declared nitpicks by the author. If unresolved after adjudication, that segment halts and independent segments continue.
 
 ## Standards
 
@@ -202,22 +216,22 @@ The following are not in MVP scope. Each becomes a future issue when the system 
 
 ## Open items
 
-Open: repo name and URL — Trevor will provide (still open as of 2026-06-15).
+Resolved (2026-06-15): repo name and URL — `github.com/TrevorHumble/Blender-Agentic-Developer` (recorded in `config/github.txt`).
 
 Resolved: Blender RAG location — `C:\Users\thumb\BlenderRag`.
 
 Open: license is undecided (MIT recommended) (still open as of 2026-06-15).
 
-Open: how Trevor will trigger a run is undecided (still open as of 2026-06-15).
+Resolved (2026-06-15): how Trevor triggers a run — the `/build` slash command at `.claude/commands/build.md`.
 
 ## Bootstrap
 
-The build was bootstrapped on the existing `adversarial-agents` skill as the held protocol, with direct git commits and direct spawning, until the committed standards and skills in this repo took over. PLAN.md has the segment-by-segment build sequence.
+The build was bootstrapped using the global `adversarial-agents` skill at `~/.claude/skills-cloud-staging/adversarial-agents` (not an in-repo file) as the held protocol, with direct git commits and direct spawning, until the committed standards and skills in this repo took over. PLAN.md has the segment-by-segment build sequence.
 
 ## Where the documentation lives
 
-**DESIGN.md** is the full evolving design and the source of truth for the system. When in doubt about how something works or why a decision was made, this is the document to consult. It grows with the system.
+**DESIGN.md** is the full evolving design and the source of truth for the system. When in doubt about how something works or why a decision was made, this is the document to consult. It grows with the system. On any conflict between DESIGN.md and CLAUDE.md, DESIGN.md governs and CLAUDE.md is corrected to match.
 
-**CLAUDE.md** is the distilled operating rules the orchestrator loads at the start of each session. It contains what the orchestrator needs to act correctly — not the full rationale, just the rules. It is kept short enough to load every time.
+**CLAUDE.md** is the distilled operating rules the orchestrator loads at the start of each session. It is derived from DESIGN.md. It contains what the orchestrator needs to act correctly — not the full rationale, just the rules. It is kept short enough to load every time.
 
 **README.md** is the short human-facing front door. It orients a newcomer, links to DESIGN.md for depth, and links to CLAUDE.md for operating rules. It does not duplicate content from either.
