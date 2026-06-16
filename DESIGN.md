@@ -20,7 +20,7 @@ The system is self-maintaining: when a skill, agent, or standard needs to change
 
 **Adversarial-by-design.** Reviewers are instructed to find failure, not to confirm success. A passing review means nothing was left to object to, not that the reviewer was satisfied.
 
-**Model-by-role.** The orchestrator and all reviewers run on Opus. The implementer runs on Sonnet. Haiku serves as the plan-clarity bar: if a plan would send a weak model off the rails, it is not ready to ship.
+**Model-by-role.** The orchestrator runs on Opus. All spawned agents — implementation and all reviewers — run on Sonnet (MVP build); Opus is the upgrade path when Sonnet proves insufficient. Haiku serves as the plan-clarity bar: if a plan would send a weak model off the rails, it is not ready to ship.
 
 **Skill-bloat guard.** When updating a skill, apply the author's intent rather than transcribing the user's words. See the Skill-bloat problem section.
 
@@ -32,6 +32,7 @@ The system is self-maintaining: when a skill, agent, or standard needs to change
 skills/
 agents/
 standards/
+issues/
 README.md
 CLAUDE.md
 DESIGN.md
@@ -51,6 +52,8 @@ Names only. This document describes the structure; it does not create or modify 
 - `skill-writer` — write or update a skill file through the PR pipeline
 - `agent-writer` — write or update an agent file through the PR pipeline
 - `update-claude-md` — update CLAUDE.md after issues and PRs
+- `research-prior-art` — time-boxed prior-art lookup before drafting
+- `write-documentation` — write or update documentation through the PR pipeline
 
 ### Agent roster
 
@@ -58,12 +61,14 @@ Names only. This document describes the structure; it does not create or modify 
 |---|---|
 | orchestrator | Opus |
 | implementation agent | Sonnet |
-| reviewer-issue | Opus |
-| reviewer-pr | Opus |
-| reviewer-skill | Opus |
-| reviewer-agent | Opus |
+| reviewer-issue | Sonnet |
+| reviewer-pr | Sonnet |
+| reviewer-skill | Sonnet |
+| reviewer-agent | Sonnet |
+| reviewer-documentation | Sonnet |
+| researcher | Sonnet |
 
-The implementation agent runs on Sonnet by default. It may escalate to Opus when the task calls for it (see the Standards section). `reviewer-architecture` is not in scope for MVP; see Deferred items.
+All spawned agents run Sonnet (MVP build); Opus is the upgrade path. `reviewer-architecture` is not in scope for MVP; see Deferred items.
 
 ### Process flows
 
@@ -131,7 +136,9 @@ Updates to skills or agents follow the same pipeline. The artifact goes to revie
 
 ### The Ralph loop
 
-An external evaluator (a fresh reviewer agent) checks the work and re-injects the task until it passes. Self-assessment is not trusted — the agent that produced the artifact does not evaluate it. The loop is manual in the MVP. Stop-hooks that automate loop control are deferred.
+An external evaluator (a fresh reviewer agent) checks the work and re-injects the task until it passes. Self-assessment is not trusted — the agent that produced the artifact does not evaluate it.
+
+**Stop condition (as-built):** a FAIL is fixed, never overridden by the author. Cap is 3 review rounds per artifact. After 3 rounds without PASS, an independent adjudicator is spawned; it must cite the exact acceptance criterion or protocol clause for each finding it retains as blocking, or downgrade it. Genuinely stylistic issues are logged to `BUILDLOG.md` as follow-up items — not silently dropped and not declared nitpicks by the author. If unresolved after adjudication, that segment halts and independent segments continue.
 
 ## Standards
 
@@ -195,13 +202,17 @@ The following are not in MVP scope. Each becomes a future issue when the system 
 
 ## Open items
 
-Open: repo name and URL — Trevor will provide.
+Open: repo name and URL — Trevor will provide (still open as of 2026-06-15).
 
-Open: Blender RAG location on this PC is not yet found.
+Resolved: Blender RAG location — `C:\Users\thumb\BlenderRag`.
 
-Open: license is undecided (MIT recommended).
+Open: license is undecided (MIT recommended) (still open as of 2026-06-15).
 
-Open: how Trevor will trigger a run is undecided.
+Open: how Trevor will trigger a run is undecided (still open as of 2026-06-15).
+
+## Bootstrap
+
+The build was bootstrapped on the existing `adversarial-agents` skill as the held protocol, with direct git commits and direct spawning, until the committed standards and skills in this repo took over. PLAN.md has the segment-by-segment build sequence.
 
 ## Where the documentation lives
 
