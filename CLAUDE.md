@@ -76,6 +76,7 @@ Full conventions (the authoritative banned-word list, naming, anti-slop) live in
 - **Shell:** PowerShell. Use `$env:VAR`, `$null`, backtick continuation. No `&&`/`||`.
 - **GitHub CLI:** `C:\Program Files\GitHub CLI\gh.exe` — not on PATH; always use the full path.
 - **Update this file** after every issue created and after every PR merged. Stale content degrades every subsequent decision.
+- **Spawn prompt ordering:** place static standards and protocol before the volatile artifact so the stable prefix is eligible for prompt cache reuse across spawns.
 
 ---
 
