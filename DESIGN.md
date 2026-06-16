@@ -221,6 +221,18 @@ The following are not in MVP scope. Each becomes a future issue when the system 
 - Blender add-on development standards — a `standards/` document defining bpy patterns, Eevee Next conventions, and API version constraints.
 - Resilience and reliability testing — testing the orchestrator's behavior under failed tool calls, bad reviewer outputs, and looping conditions.
 
+## Governance: in-license constraint
+
+The system runs inside two entitlements only: a `GitHub Pro` license and an `Anthropic Max` (Claude) subscription. There is `no other external/paid API`, account, key, or third-party SaaS.
+
+The only sanctioned model access is the Anthropic subscription. No non-Anthropic model key (OpenAI, Gemini, etc.) and no hosted eval/judge service (`Braintrust`, `LangSmith`, `OpenAI Evals`, Langfuse, Weights & Biases).
+
+Blender automation is local only: allowed calls include `execute_blender_code`, `get_scene_info`, `get_viewport_screenshot`, and the local Blender RAG. The external asset generators in the Blender MCP toolset are prohibited in any add-on or eval: `download_polyhaven_asset`, `download_sketchfab_model`, `generate_hyper3d_model_via_text`, `generate_hunyuan3d_model_via_images`, `generate_hunyuan3d_model`, and any Rodin/Sketchfab path.
+
+CI runs on GitHub Actions under `GitHub Pro` on the public repo (unlimited minutes); Blender is installed into the runner (free/open-source).
+
+Evals are `Claude-as-judge` (the Opus reviewer agents) + local pytest/coverage.py + headless Blender. Any dependency needing a non-Anthropic key or a hosted account is out of license by definition.
+
 ## Open items
 
 Resolved (2026-06-15): repo name and URL — `github.com/TrevorHumble/Blender-Agentic-Developer` (recorded in `config/github.txt`).

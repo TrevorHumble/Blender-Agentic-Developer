@@ -86,3 +86,9 @@ A backlog issue is never implemented in place. When its `Graduate after` conditi
 - [ ] PASS/FAIL — `Depends on` field is present.
 - [ ] PASS/FAIL — `Graduate after` field is present and states a deterministic condition (not a human approval).
 - [ ] PASS/FAIL — Tier is declared as `backlog` in the `**Type:**` line.
+
+---
+
+## In-license check (all tiers)
+
+An issue that requires an `external/paid API`, a `non-Anthropic model key`, or a `hosted third-party service` is `out of license` — return `FAIL`.
