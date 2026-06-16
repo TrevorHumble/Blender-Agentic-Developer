@@ -42,3 +42,36 @@ straight (colinear within 1e-4 rad) are left unchanged.
 `rounded_corner()` is bpy-free (uses only the `math` standard library) and
 is unit-tested outside Blender. See `issues/0018-bevel-bezier-corners-addon.md`
 for the fillet geometry derivation.
+
+---
+
+## phyllotaxis.py
+
+Places N points in the golden-angle (sunflower-seed) phyllotaxis pattern and
+creates a new mesh object whose vertices are those points. Appears in
+**Add > Mesh > Phyllotaxis**.
+
+### Install
+
+Same two options as `bevel_bezier_corners.py` above (Blender Preferences or
+Text Editor run-script).
+
+### Use
+
+In Object Mode, go to **Add > Mesh > Phyllotaxis** (or F3 search "Phyllotaxis").
+Adjust parameters in the operator redo panel.
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `count` | int (min 1) | 300 | Number of points to generate. |
+| `scale` | float (min 0.0001) | 0.1 | Radial scale; point i sits at radius `scale * sqrt(i)`. |
+| `dome` | float | 0.0 | When non-zero, lifts points into a paraboloid: `dome * (1 - (r/r_max)^2)`. Zero keeps the pattern flat. |
+
+### Geometry function
+
+`phyllotaxis_points(count, scale, dome=0.0)` is bpy-free (uses only the `math`
+standard library) and is unit-tested outside Blender. The golden angle is derived
+from the golden ratio (`math.sqrt(5)`), not a hard-coded constant. See
+`issues/0025-phyllotaxis-addon.md` for background.
