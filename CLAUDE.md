@@ -94,7 +94,7 @@ Full conventions (the authoritative banned-word list, naming, anti-slop) live in
 - **GitHub CLI:** `C:\Program Files\GitHub CLI\gh.exe` — not on PATH; always use the full path.
 - **Update this file** after every issue created and after every PR merged. Stale content degrades every subsequent decision.
 - **Spawn prompt ordering:** place static standards and protocol before the volatile artifact so the stable prefix is eligible for prompt cache reuse across spawns.
-- **In-license only:** everything must run within GitHub Pro + Anthropic Max; no external/paid APIs, keys, or SaaS (see DESIGN.md).
+- **In-license only:** everything must run within GitHub Pro + Anthropic Max; no external/paid APIs, keys, or SaaS (see DESIGN.md). **First-party GitHub security features — Secret Scanning + push protection, Dependabot, CodeQL — are in-license and are REQUIRED, not optional** (they are GitHub-native, free on public repos; "no SaaS" never meant excluding them — that misreading left the repo with no deterministic security layer, per the 2026-06-16 round-2 review).
 - **GitHub is the single source of truth:** every task is a GitHub issue and the board is canonical for status; the pipeline keeps it in sync (open on issue-create, close on merge), and `reviewer-tracker-sync` FAILs a merge that leaves the board stale. The `issues/NNNN-*.md` files hold the detail; the GitHub issue owns the state (see DESIGN.md "Source of truth"). Supersedes #0027.
 
 ---
