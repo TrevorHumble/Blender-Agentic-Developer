@@ -43,6 +43,33 @@ This repo is a Claude Code orchestrator agent that builds and maintains Blender 
 
 ---
 
+## Getting started
+
+For the plain-language version of what a passing build proves — and where you're still the final eye — see [WHAT-IT-CHECKS.md](WHAT-IT-CHECKS.md).
+
+**Run the checks locally.** `tests/run_tests.ps1` runs every gate, but it requires Blender for the Blender-side gates (it exits with `TESTS_FAILED: blender not found` if Blender is missing). With no Blender installed, run the three bpy-free pure gates standalone with plain Python: `python tests/run_pure.py`, `python tests/run_phyllotaxis_pure.py`, `python tests/mutation_harness.py`. Override the Blender path for the full run with `$env:BLENDER_EXE`:
+
+```powershell
+tests/run_tests.ps1
+$env:BLENDER_EXE = "C:\path\to\blender.exe"; tests/run_tests.ps1
+```
+
+The three bpy-free gates need no Blender — run them with plain Python:
+
+```powershell
+python tests/run_pure.py            # bevel geometry
+python tests/run_phyllotaxis_pure.py # phyllotaxis geometry
+python tests/mutation_harness.py     # the tamper gate
+```
+
+**What CI runs on every push and PR** (`.github/workflows/`): `ci.yml` lints the add-ons (ruff + bandit), runs the geometry tests and the mutation/tamper gate, then downloads Blender and runs the headless operator tests + eval suite, and uploads a rendered preview of each add-on as a downloadable artifact. `codeql.yml` runs GitHub's CodeQL security scan. See [tests/README.md](tests/README.md) for the gate-by-gate table.
+
+**Trigger a build.** Run `/build <goal>` (the orchestrator slash command at `.claude/commands/build.md`); it carries the goal through `issue → review → implement → PR → review → commit`.
+
+**Where the add-ons live.** `addons/` holds the shipped Blender add-ons and their install instructions (`addons/README.md`). Full design rationale is in [DESIGN.md](DESIGN.md).
+
+---
+
 ## Repo layout
 
 | Path | Purpose |
