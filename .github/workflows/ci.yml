@@ -44,12 +44,22 @@ jobs:
       - name: Install Blender runtime deps
         run: sudo apt-get update && sudo apt-get install -y libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libsm6 libgl1
 
+      - name: Cache Blender 5.1
+        id: cache-blender
+        uses: actions/cache@v4
+        with:
+          path: blender
+          key: blender-5.1.0-linux-x64
+
       - name: Download Blender 5.1
+        if: steps.cache-blender.outputs.cache-hit != 'true'
         run: |
           curl -sSL https://download.blender.org/release/Blender5.1/blender-5.1.0-linux-x64.tar.xz -o blender.tar.xz
           mkdir -p blender
           tar -xf blender.tar.xz -C blender --strip-components=1
-          ./blender/blender --version
+
+      - name: Verify Blender
+        run: ./blender/blender --version
 
       - name: Headless operator test
         run: ./blender/blender --background --factory-startup --python-exit-code 1 --python tests/run_headless.py
