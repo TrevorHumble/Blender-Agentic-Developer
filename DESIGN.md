@@ -160,7 +160,7 @@ The reviewer returns PASS/FAIL followed by a numbered list of specific defects. 
 1. The Sonnet implementation agent builds toward the passing issue, consulting `blender-rag` for any bpy code.
 2. Push the branch and open a PR via `github-write`.
 3. Hand the raw diff to reviewer-pr with no framing.
-4. Reviewer checks: correctness, tests tracing to acceptance criteria, coverage ≥ 80%, lint/format, comment quality, naming, and architectural fit.
+4. Reviewer checks: correctness, tests that assert real output values (not just counts) and trace to acceptance criteria, that the mutation/tamper gate still catches deliberately-broken code, lint/format, comment quality, naming, and architectural fit.
 5. On FAIL, fix the implementation and re-submit to a fresh reviewer (the Ralph loop). Repeat until PASS.
 6. On PASS, merge the PR.
 7. Update `CLAUDE.md` and the README if public-facing behavior changed.
@@ -227,9 +227,16 @@ Comments state why, not what. One line maximum. No filler, no restatement of wha
 
 No FINAL, LAST, or v2_final in any filename. Use version numbers (v1, v2), dates, or descriptive deltas that remain accurate after the next iteration.
 
-### Test coverage
+### Test strength
 
-Code artifacts require ≥ 80% test coverage. Documentation artifacts are exempt.
+The bar is that tests assert **correct output values**, not that they exist or that some
+line-coverage percentage is hit. A coverage percentage is a vanity metric — a suite can touch
+every line and still assert nothing meaningful, which for a code-blind owner is false confidence.
+So the gate is two real things instead: (1) the pure tests assert actual geometry (the bevel
+arc/handle positions, the phyllotaxis golden angle, radius law, and dome), and (2) the
+mutation/tamper harness (`tests/mutation_harness.py`) deliberately breaks the add-ons and proves
+those tests flip to FAIL, emitting a `guards caught N/N` line. No line-coverage threshold is
+measured or required. Documentation artifacts are exempt from tests.
 
 ### CLAUDE.md update triggers
 
@@ -256,7 +263,7 @@ The following have not yet shipped. Each becomes a future issue when the system 
 
 ### Delivered (no longer deferred)
 
-- CI/coverage enforcement (#0024) — `.github/workflows/ci.yml` runs the full test + eval suite on every push and PR via GitHub Actions.
+- CI enforcement (#0024) — `.github/workflows/ci.yml` runs the full test + mutation + eval suite on every push and PR via GitHub Actions.
 - Ralph-loop stop hooks (#0021) — `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook; enforces the verdict gate on every Stop event.
 
 ## System-level change definition
@@ -284,17 +291,19 @@ Blender automation is local only: allowed calls include `execute_blender_code`, 
 
 CI runs on GitHub Actions under `GitHub Pro` on the public repo (unlimited minutes); Blender is installed into the runner (free/open-source).
 
-Evals are `Claude-as-judge` (the Opus reviewer agents) + local pytest/coverage.py + headless Blender. Any dependency needing a non-Anthropic key or a hosted account is out of license by definition.
+Evals and tests are `Claude-as-judge` (the Opus reviewer agents) + the dependency-free pure tests (`tests/run_pure.py`, `tests/run_phyllotaxis_pure.py`), the mutation/tamper harness (`tests/mutation_harness.py`), and headless Blender — all standard-library Python, no `pytest` or `coverage.py` dependency. Any dependency needing a non-Anthropic key or a hosted account is out of license by definition.
 
 ## CI
 
 `.github/workflows/ci.yml` runs on every push and pull request via GitHub Actions on the public repo
 (GitHub Pro, unlimited minutes). The job installs a free Blender 5.1 Linux build into the runner and
-executes all three gates in order:
+executes these gates in order:
 
-1. `tests/run_pure.py` — plain Python, no Blender runtime required.
-2. `tests/run_headless.py` — headless operator test under `blender --background --python-exit-code 1`.
-3. `evals/run_evals.py` — deterministic geometry eval suite, same flags.
+1. `tests/run_pure.py` — bevel geometry (tangent points, handles, circular-arc midpoint); plain Python, no Blender.
+2. `tests/run_phyllotaxis_pure.py` — phyllotaxis geometry (golden angle, radius law, dome); plain Python, no Blender.
+3. `tests/mutation_harness.py` — the tamper gate: breaks copies of both add-ons and proves the pure tests catch it (`guards caught N/N`); plain Python, no Blender.
+4. `tests/run_headless.py` — headless bevel operator test under `blender --background --python-exit-code 1`.
+5. `evals/run_evals.py` — deterministic geometry eval suite, same flags.
 
 Each step fails the job on a non-zero exit (default shell behaviour). In-license: free Blender
 download from `download.blender.org`; no Codecov, Coveralls, or any hosted coverage/eval SaaS.

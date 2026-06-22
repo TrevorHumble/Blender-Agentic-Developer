@@ -40,7 +40,10 @@ straight (colinear within 1e-4 rad) are left unchanged.
 ### Geometry function
 
 `rounded_corner()` is bpy-free (uses only the `math` standard library) and
-is unit-tested outside Blender. See `issues/0018-bevel-bezier-corners-addon.md`
+is unit-tested outside Blender in `tests/run_pure.py` — which checks the
+tangent points, the arc-side handles, and that the fillet is a true circular
+arc (not a flat chamfer). `tests/mutation_harness.py` proves that test catches
+deliberately-broken geometry. See `issues/0018-bevel-bezier-corners-addon.md`
 for the fillet geometry derivation.
 
 ---
@@ -72,6 +75,9 @@ Adjust parameters in the operator redo panel.
 ### Geometry function
 
 `phyllotaxis_points(count, scale, dome=0.0)` is bpy-free (uses only the `math`
-standard library) and is unit-tested outside Blender. The golden angle is derived
-from the golden ratio (`math.sqrt(5)`), not a hard-coded constant. See
-`issues/0025-phyllotaxis-addon.md` for background.
+standard library) and is unit-tested outside Blender in
+`tests/run_phyllotaxis_pure.py` — which checks the golden-angle step between
+points, the `scale * sqrt(i)` radius law, and the dome paraboloid.
+`tests/mutation_harness.py` proves that test catches a hard-coded or wrong
+golden angle. The golden angle is derived from the golden ratio (`math.sqrt(5)`),
+not a hard-coded constant. See `issues/0025-phyllotaxis-addon.md` for background.

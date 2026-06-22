@@ -26,8 +26,9 @@ tools: [Read, Write, Edit, Bash, Glob, Grep]
 - A one-line confirmation message: `"Artifact written to <path>. Ready for review."` — no
   self-approval, no PASS verdict. Judgment belongs to the reviewer.
 
-**Bash scope:** Bash is held for CODE artifacts only — running tests, linters, and coverage
-checks as required by the PR lifecycle's coverage requirement. It is not used for documentation,
+**Bash scope:** Bash is held for CODE artifacts only — running the test gates (the bpy-free pure
+tests, the mutation/tamper harness, and, where Blender is available, the headless and eval suites)
+as required by the PR lifecycle. It is not used for documentation,
 skill, or agent artifacts. It is never used to commit or self-approve.
 
 ---
