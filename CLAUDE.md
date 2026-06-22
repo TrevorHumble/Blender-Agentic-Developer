@@ -23,10 +23,9 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 
 1. `issue` — orchestrator drafts issue in `issues/NNNN-*.md`
 2. `review` — spawn adversarial reviewer-issue; FAIL is fixed, never overridden
-3. `implement` — spawn implementation agent with full handoff (issue + prior art)
-4. `PR` — implementation agent pushes branch and opens PR
-5. `review` — spawn adversarial reviewer-pr against the diff
-6. `commit` — PASS merges; append one-line entry to `BUILDLOG.md`
+3. `implement` — spawn implementation agent with full handoff (issue + prior art); it produces the diff, no PR — the orchestrator is the sole committer
+4. `review` — spawn adversarial reviewer-pr against the diff; FAIL is fixed, never overridden
+5. `commit` — on PASS the orchestrator commits directly to `main` and appends a one-line entry to `BUILDLOG.md`. After every push, watch CI to green and never knowingly leave `main` red — a red `main` is fixed or reverted before proceeding (see `agents/orchestrator.md`).
 
 ---
 
@@ -103,10 +102,10 @@ Full conventions (the authoritative banned-word list, naming, anti-slop) live in
 - **Anti-slop:** no filler adjectives, no throat-clearing openers (banned list in the standard).
 - **Shell:** PowerShell. Use `$env:VAR`, `$null`, backtick continuation. No `&&`/`||`.
 - **GitHub CLI:** `C:\Program Files\GitHub CLI\gh.exe` — not on PATH; always use the full path.
-- **Update this file** after every issue created and after every PR merged. Stale content degrades every subsequent decision.
+- **Update this file** after every issue created and after every commit to `main`. Stale content degrades every subsequent decision.
 - **Spawn prompt ordering:** place static standards and protocol before the volatile artifact so the stable prefix is eligible for prompt cache reuse across spawns.
 - **In-license only:** everything must run within GitHub Pro + Anthropic Max; no external/paid APIs, keys, or SaaS (see DESIGN.md). **First-party GitHub security features — Secret Scanning + push protection, Dependabot, CodeQL — are in-license and are REQUIRED, not optional** (they are GitHub-native, free on public repos; "no SaaS" never meant excluding them — that misreading left the repo with no deterministic security layer, per the 2026-06-16 round-2 review).
-- **GitHub is the single source of truth:** every task is a GitHub issue and the board is canonical for status; the pipeline keeps it in sync (open on issue-create, close on merge), and `reviewer-tracker-sync` FAILs a merge that leaves the board stale. The `issues/NNNN-*.md` files hold the detail; the GitHub issue owns the state (see DESIGN.md "Source of truth"). Supersedes #0027.
+- **GitHub is the single source of truth:** every task is a GitHub issue and the board is canonical for status; the pipeline keeps it in sync (open on issue-create, close on commit to `main`), and `reviewer-tracker-sync` FAILs a commit that leaves the board stale. The `issues/NNNN-*.md` files hold the detail; the GitHub issue owns the state (see DESIGN.md "Source of truth"). Supersedes #0027.
 
 ---
 

@@ -47,6 +47,15 @@ allowed rounds.
    matches reality. Before declaring the segment done, spawn `agents/reviewer-tracker-sync.md` — it FAILs
    if the board is out of sync with the issue files / BUILDLOG. The board is kept current at every
    transition: issue created → `gh issue` opened; PR merged/committed → `gh issue` closed.
+   - **Believe the green light — watch CI to green after every push.** This is a direct-push model:
+     the orchestrator commits straight to `main` and is the only committer; there is no human merge
+     approval (by design — Trevor never pushes code). So the green light is made trustworthy by the
+     orchestrator itself: after every push, watch the CI run to completion and confirm it is green
+     before moving on. `main` is never knowingly left red. If CI goes red, fix the cause or revert the
+     commit before proceeding — a red `main` is a stop-and-fix condition, not something to push past.
+     (Hard branch-protection required-checks would force a pull-request merge flow; that is a deliberate
+     model change, not a default — it is not enabled, and this post-push CI-watch is the operative
+     enforcement.)
 
 ---
 
@@ -102,6 +111,11 @@ because a queue emptied or the work "felt done." Full procedure and live state: 
   (a)+(b) add nothing, (c) MUST run and MUST return at least one concrete improvement candidate before the
   selector is re-entered.** Research output stays within the in-license constraint (DESIGN.md governance) — a
   "better practice" needing an external/paid API or SaaS is out of scope and is surfaced as a note, not adopted.
+- **Watch CI to green before the increment counts as done.** Each increment that pushes to `main` is not
+  complete until its CI run is watched to completion and confirmed green — same guarantee as the Commit
+  step. `main` is never knowingly left red. This is part of completing the increment, not a new run-exit:
+  if CI goes red, fix the cause or revert the commit *within the run* before the selector advances to the
+  next item. A red `main` is fixed in-loop; it never stops the timed run.
 - **A halt is per-segment, never a run exit.** The impasse-halt (Stop condition) still halts an individual
   *segment*; during a timed run the orchestrator logs it, the halted work becomes a parked blocker
   (revisited in the Cascade), and control returns to the selector. The run still ends only at WRAP.
