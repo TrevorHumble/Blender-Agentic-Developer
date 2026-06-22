@@ -69,3 +69,22 @@ jobs:
 
       - name: Eval suite
         run: ./blender/blender --background --factory-startup --python-exit-code 1 --python evals/run_evals.py
+
+      # Visual-confirmation previews — render each add-on's output to a PNG so
+      # Trevor (final eye, can't read code) can download and SEE the result.
+      # This is the HUMAN visual gate, NOT a correctness gate: the geometry is
+      # already proven by the tests/evals above. continue-on-error is on the
+      # render step ONLY so a render hiccup produces a preview artifact without
+      # red-failing the build.
+      - name: Render add-on previews
+        continue-on-error: true
+        run: |
+          ./blender/blender --background --factory-startup --python-exit-code 1 --python tools/render_preview.py -- bevel_bezier_corners
+          ./blender/blender --background --factory-startup --python-exit-code 1 --python tools/render_preview.py -- phyllotaxis
+
+      - name: Upload add-on previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: addon-previews
+          path: renders/*.png
+          if-no-files-found: warn
