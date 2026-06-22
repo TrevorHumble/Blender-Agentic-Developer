@@ -114,6 +114,13 @@ def rounded_corner(prev, corner, nxt, radius, colinear_eps=1e-4):
     a = _normalize(_sub(p, c))   # unit vector: corner → prev
     b = _normalize(_sub(n, c))   # unit vector: corner → nxt
 
+    # Degenerate-edge guard: _normalize returns the zero vector when an edge
+    # length is below 1e-12 (duplicate adjacent vertex). A zero vector would
+    # give _dot(a,b)=0 -> theta=pi/2 and fool the colinear guard below into
+    # emitting a bogus fillet, so reject the corner here as degenerate.
+    if a == (0.0, 0.0, 0.0) or b == (0.0, 0.0, 0.0):
+        return None  # zero-length edge — leave unfilleted
+
     raw_dot = _clamp(_dot(a, b), -1.0, 1.0)
     theta = math.acos(raw_dot)
 
@@ -273,7 +280,9 @@ class CURVE_OT_bevel_bezier_corners(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        return obj is not None and obj.type == 'CURVE'
+        # Require OBJECT mode: execute() rebuilds curve.splines via the data
+        # API, which is unsafe / not reflected while the object is in Edit Mode.
+        return obj is not None and obj.type == 'CURVE' and obj.mode == 'OBJECT'
 
     def execute(self, context):
         obj = context.active_object
@@ -324,7 +333,9 @@ class CURVE_PT_bevel_bezier_corners(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        return obj is not None and obj.type == 'CURVE'
+        # Grey out the button in Edit Mode — the operator rebuilds splines via
+        # the data API and must only run in OBJECT mode.
+        return obj is not None and obj.type == 'CURVE' and obj.mode == 'OBJECT'
 
     def draw(self, context):
         layout = self.layout

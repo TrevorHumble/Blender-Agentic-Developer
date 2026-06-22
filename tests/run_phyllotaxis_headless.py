@@ -112,5 +112,43 @@ for i in (10, COUNT - 1):
         print(f"FAIL: radius at i={i} expected {want}, got {r}")
         sys.exit(1)
 
+# Golden-angle law: re-derive GA IN-FILE (do NOT read it from the add-on), so a
+# hard-coded 137.5 or a wrong constant in the operator output is caught against
+# an independent reference rather than against the add-on's own value. Each
+# consecutive polar-angle step must advance by GA mod 2pi.
+TWO_PI = 2.0 * math.pi
+GA = math.radians(360.0 * (2.0 - (1.0 + math.sqrt(5.0)) / 2.0))
+ga_expected = GA % TWO_PI
+for i in (1, 23):
+    xa, ya, _ = produced[i]
+    xb, yb, _ = produced[i + 1]
+    step = (math.atan2(yb, xb) - math.atan2(ya, xa)) % TWO_PI
+    if abs(step - ga_expected) > ANCHOR_TOL:
+        print(f"FAIL: golden-angle step at i={i} expected {ga_expected}, got {step}")
+        sys.exit(1)
+
+# Dome law: re-derive the paraboloid falloff IN-FILE from the geometry (radius),
+# NOT by calling phyllotaxis_points. With DOME=2.0: center (i=0, r=0) lifts to
+# DOME, the outermost vertex falls to ~0, and an interior vertex matches
+# DOME*(1 - (r/r_max)**2). Catches a wrong dome formula or a flipped falloff.
+r_max = SCALE * math.sqrt(COUNT - 1)
+
+z0 = produced[0][2]
+if abs(z0 - DOME) > ANCHOR_TOL:
+    print(f"FAIL: dome center z (i=0, r=0) expected {DOME}, got {z0}")
+    sys.exit(1)
+
+z_out = produced[COUNT - 1][2]
+if abs(z_out - 0.0) > ANCHOR_TOL:
+    print(f"FAIL: dome outermost z (i={COUNT - 1}) expected ~0.0, got {z_out}")
+    sys.exit(1)
+
+i = 17
+x, y, z = produced[i]
+want_z = DOME * (1.0 - (math.hypot(x, y) / r_max) ** 2)
+if abs(z - want_z) > ANCHOR_TOL:
+    print(f"FAIL: dome interior z at i={i} expected {want_z}, got {z}")
+    sys.exit(1)
+
 print("PHYLLOTAXIS_HEADLESS_PASS")
 sys.exit(0)

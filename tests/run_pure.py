@@ -198,5 +198,15 @@ if got2_t2 != expected2_t2:
 _check_handles_and_arc("60deg", r2, P2, C2, N2, R2)
 
 
+# ===========================================================================
+# Case 3 — degenerate zero-length edge (duplicate adjacent vertex).
+# prev == corner makes edge a zero-length; rounded_corner must return None
+# rather than emit a bogus pi/2 fillet.
+# ===========================================================================
+if rounded_corner((1, -1, 0), (1, -1, 0), (1, 1, 0), 0.4) is not None:
+    print("FAIL [degenerate]: prev==corner should return None")
+    sys.exit(1)
+
+
 print("PURE_PASS")
 sys.exit(0)
