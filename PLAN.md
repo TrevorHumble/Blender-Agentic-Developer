@@ -7,7 +7,8 @@ Sequences the MVP into dependency-correct segments. Authoritative design: [DESIG
 
 ## Goal
 Stand up the foundational standards, agents, and skills that let the orchestrator run its own
-pipeline on real Blender work later. Trevor is out of the loop; adversarial agents are the gate.
+pipeline on real Blender work later. Trevor is out of the code-review loop (the adversarial agents are
+the code gate); he remains the final eye on the visual result.
 
 ## Bootstrap (resolves the chicken-and-egg)
 The system cannot use its own committed skills before they exist. So the build is **bootstrapped**:

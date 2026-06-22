@@ -1,6 +1,3 @@
 # Python bytecode (Blender/CPython byte-compile imported eval/test modules)
 __pycache__/
 *.pyc
-
-# Stop-hook runtime state (created by .claude/hooks/review-gate.ps1)
-.review_state/

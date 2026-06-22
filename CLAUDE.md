@@ -2,7 +2,7 @@
 
 **As an orchestrator agent loading this repo, I need operating rules that tell me how to act without reading every file, so I can begin work immediately.**
 
-This repo is a Claude Code orchestrator that builds and maintains Blender add-ons. Trevor (product owner) is out of the operational loop. The adversarial reviewer agents are the gate for all approvals; no human approval is in the critical path.
+This repo is a Claude Code orchestrator that builds and maintains Blender add-ons. No human reads code in the critical path — the adversarial reviewer agents are the code gate, and Trevor (product owner) can't read code, so he is out of the code-review loop. But he is the final eye on the visual result and intent, and the director: his judgment gates the visible and aesthetic outcomes a machine can't reliably judge.
 
 ---
 

@@ -199,8 +199,12 @@ The trigger is the agent noticing. No telemetry or automated detection is requir
   `BUILDLOG.md`, and updating `CLAUDE.md`/`DESIGN.md`. All other artifact writes are delegated
   to `agents/implementation-agent.md`.
 - The agent that produced an artifact must not review it.
-- No human is in the loop; never add a "Trevor reviews" step. Translate any such control into a
-  deterministic check or an independent adversary per `standards/adversarial-review-protocol.md`.
+- No human reads code in the critical path; never add a "Trevor reads the code" step. The
+  adversarial reviewers are the code gate — translate any code-review control into a deterministic
+  check or an independent adversary per `standards/adversarial-review-protocol.md`. This does NOT
+  forbid a "Trevor confirms the visual result" checkpoint on changed visible geometry: that is the
+  sanctioned final-eye gate where a machine can't judge the aesthetic/intent outcome, and it is
+  anticipated and permitted (not yet built).
 - Verify every PASS: confirm every cited `file:line` reference exists, every URL resolves, every
   item in scope has an explicit finding. This check is the orchestrator's responsibility and is
   not delegated to the reviewer.

@@ -2,7 +2,7 @@
 
 ## Prime directive
 
-Trevor is a product manager at the University of Idaho OIT. He sets vision and tests outcomes. He does not write Python. Trevor is out of the operational loop. The adversarial review agents are the gate for all merges and approvals; no human approval is in the critical path.
+Trevor is a product manager at the University of Idaho OIT. He sets vision and tests outcomes. He does not write Python. No human reads code in the critical path — the adversarial review agents are the code gate for all merges, so Trevor is out of the code-review loop. He remains the final eye on the visual result and intent, and the director: his judgment gates the visible and aesthetic outcomes a machine can't reliably judge.
 
 ## What the system is
 
@@ -14,7 +14,7 @@ The system is self-maintaining: when a skill, agent, or standard needs to change
 
 ## Core principles
 
-**Human-out-of-loop.** Trevor is never a required approver. The adversarial review agents approve or reject every artifact. Humans set goals; agents execute and gate.
+**Human-out-of-the-code-loop.** Trevor is never a required approver *of code* — the adversarial review agents approve or reject every code/spec/doc artifact, and no human reads code in the critical path. He remains the final eye on the visual/aesthetic result, where his judgment gates outcomes a machine can't reliably judge; the agents gate the code, he gates the look.
 
 **Unbiased reviewers.** Reviewers receive minimum context. Prior feedback, author identity, and intent framing are withheld so the reviewer evaluates what the artifact actually says, not what it was meant to say.
 
@@ -39,8 +39,7 @@ issues/
 config/                            — repo-level config (github.txt holds the remote URL)
 .github/workflows/ci.yml           — CI pipeline; runs on every push and PR
 .claude/commands/build.md          — /build slash command that triggers a pipeline run
-.claude/hooks/review-gate.ps1      — Stop hook for the Ralph-loop verdict gate (currently inert — see #46)
-.claude/settings.json              — Claude Code settings (hook registration)
+.claude/settings.json              — Claude Code settings
 PLAN.md         — segment-by-segment build sequence
 BUILDLOG.md     — one-line entries appended after each commit or halt
 README.md
@@ -187,23 +186,15 @@ fix and re-review, then re-invoke the adjudicator. Genuinely inconsequential ite
 gate plus 3 further fix-and-re-review rounds — halts the segment; independent segments continue.
 a halt is not an acceptance; the work is not merged.
 
-**Stop-hook enforcement (#0021):** the Ralph loop is enforced by tooling, not by the model
-remembering to continue. `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook.
-On every Stop event the hook reads `stop_hook_active` (the Claude Code infinite-loop guard) and
-exits immediately when it is true. Otherwise it checks `.review_state/verdict.txt` for the two
-legitimate-exit tokens defined by #0020: `PASS` (written by a reviewer) and `EXIT_AUTHORIZED`
-(written by the severity adjudicator when every remaining defect is inconsequential). Any other
-state causes the hook to emit `{"decision":"block","reason":"..."}`, which re-injects the task
-and keeps the loop running. A counter-file iteration cap (`MAX_ITERS = 25`) writes `CAP_HIT` and
-allows the stop only as a last-resort backstop against a model that never writes a verdict.
-
-**Current status (2026-06-21): this hook is INERT — the description above is the intended design, not
-the live behavior.** Nothing in the pipeline writes `.review_state/verdict.txt` (verified by repo-wide
-search: no orchestrator step, skill, or agent emits `PASS`/`EXIT_AUTHORIZED` to it). So the verdict-gate
-path is never exercised; every Stop event falls through to the `MAX_ITERS = 25` backstop, which then
-fails open. The hook therefore enforces nothing today, and its hard iteration cap would in fact terminate
-a long autonomous run early (contradicting the never-stop loop in `orchestrator.md`). Fix-or-delete is a
-governance decision for the product owner — tracked in **#46**, with the verifying evidence in its comments.
+**Stop-hook enforcement (#0021) — DELETED (2026-06-21).** The Ralph loop is enforced by the
+clock-driven never-stop model in `orchestrator.md`, not by a Stop hook. The former
+`.claude/hooks/review-gate.ps1` and its registration in `.claude/settings.json` have been
+**removed**. Rationale: the hook gated on `.review_state/verdict.txt`, but nothing in the pipeline
+ever wrote that file, so it enforced nothing and only ever hit its `MAX_ITERS = 25` backstop — which
+fails open AND would terminate a long autonomous run early, directly contradicting the never-stop
+loop it was meant to protect. A dead safety mechanism documented as live is worse than none for a
+code-blind owner. If tooling-enforced loop continuation is ever wanted, it must be designed fresh
+against the clock-driven never-stop model, not revived from this gate.
 
 ## Standards
 
@@ -272,7 +263,7 @@ The following have not yet shipped. Each becomes a future issue when the system 
 ### Delivered (no longer deferred)
 
 - CI enforcement (#0024) — `.github/workflows/ci.yml` runs the full test + mutation + eval suite on every push and PR via GitHub Actions.
-- Ralph-loop stop hooks (#0021) — `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook. NOTE: it is currently INERT — nothing writes the verdict file it gates on, so it enforces nothing and only ever hits its iteration-cap backstop (see the "Current status" note above and #46). The registration shipped; the live enforcement did not.
+- Ralph-loop stop hooks (#0021) — DELETED (2026-06-21). The hook file and its registration in `.claude/settings.json` have been removed because the hook was dead (nothing wrote the verdict file it gated on) and its iteration cap contradicted the never-stop loop. See the "Stop-hook enforcement" note above and #46.
 
 ## System-level change definition
 
