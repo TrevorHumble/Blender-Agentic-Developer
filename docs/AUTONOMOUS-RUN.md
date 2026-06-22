@@ -36,12 +36,13 @@ Format: the ledger line defined in `agents/orchestrator.md` → "Autonomous time
 
 **Mission: make the gates REAL and PROVEN. Done and CI-verified end-to-end (incl. real Blender steps).**
 
-Shipped (12 commits, `a995f13..`, all pushed, every CI run green):
-- **Every gate now asserts real geometry, not counts** — bevel pure (handles + circular-arc midpoint), phyllotaxis pure (golden angle / radius / dome), bevel headless operator positions, phyllotaxis headless operator mesh, eval square + triangle (acute) positions.
-- **Mutation/tamper harness** (`tests/mutation_harness.py`) — breaks both add-ons, proves the pure tests catch it (`guards caught 6/6`), with per-mutant attribution (credits a catch only when the RIGHT guard fired) + a `MUTATION_SCORE` line. The North-Star "smoke detector," and it has teeth (proven both directions).
+Shipped (13 commits, `a995f13..`, all pushed, every CI run green — incl. the real Blender steps):
+- **Every gate now asserts real geometry, not counts** — bevel pure (handles + circular-arc midpoint), phyllotaxis pure (golden angle / radius / dome), bevel headless operator positions, phyllotaxis headless operator mesh, eval square + triangle (acute) + large-radius CLAMP positions. All five gates green in CI including the live Blender headless + eval runs.
+- **Mutation/tamper harness** (`tests/mutation_harness.py`) — breaks both add-ons, proves the pure tests catch it (`guards caught 6/6`), with per-mutant attribution (credits a catch only when the RIGHT guard fired) + a `MUTATION_SCORE` line. The North-Star "smoke detector," teeth proven both directions.
+- **Deterministic (non-LLM) layer strengthened** — new parallel `lint` CI job: ruff (`F,B`) + bandit on `addons/`, verified clean before wiring. Turns code-cleanliness + security-pattern checks from LLM-opinion into identical-every-run gates; further-gate menu (mypy/vulture/radon) filed on #32.
 - **Docs made honest** — removed the fictional ≥80% coverage gate (#44); marked the dead Stop-hook inert pending #46; refreshed test docs; eval added to the local runner.
 - **Engine hardened** — autonomous-run timing must be read from a real clock, never estimated (fixed mid-run after an 11m drift would have caused an early WRAP).
-- Closed #41, #42, #44. Filed #48 (CodeQL gap), #49 (ledger binding), #50 (mutation-test the Blender gates). Reconciled #35/#32; commented dead-hook evidence on #46; posted an SVG-editor security gate checklist on #40.
+- Closed #41, #42, #44. Filed #48 (CodeQL gap), #49 (ledger binding), #50 (mutation-test the Blender gates). Reconciled #35/#32; commented dead-hook evidence on #46; posted an SVG-editor security checklist on #40 and a deterministic-gate menu on #32.
 
 Parked for Trevor (decisions only he can make — never blocked the run):
 - **#48 CodeQL** — claimed enabled in an old log, but zero analyses exist; enabling is a security setting (his call). Secret Scanning + push protection + Dependabot are verified ON.
@@ -71,3 +72,4 @@ Parked for Trevor (decisions only he can make — never blocked the run):
 - `[19:43] elapsed=88.4m/budget=120m | selector->DO eval-clamp-positions(commit+CI) | next=commit clamp position check (Opus PASS, duplicate-safety proven; every eval case now position-asserts), push, watch CI, then WRAP window`
 - `[19:46] elapsed=91.2m/budget=120m | selector->CASCADE deep-research (genuine work past 90m, not over-building) | next=research in-license deterministic quality gates (addresses arch-review thin-deterministic-layer + #32 ruff scope); post actionable menu, then approach WRAP window`
 - `[19:54] elapsed=98.9m/budget=120m | selector->DO lint-gate(commit+CI) | next=commit ruff+bandit deterministic gate (verified clean twice, Opus PASS), push, watch CI (new lint job must go green), then WRAP window (~105m)`
+- `[19:56] elapsed=101m/budget=120m | selector->WRAP-approach (genuine improvement space exhausted; remaining work is owner-decisions or over-building two 250-line add-ons) | next=commit final run-outcome summary, hand back. Mission + full Cascade done, CI-verified; deterministic layer strengthened past 90m as instructed.`
