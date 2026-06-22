@@ -1,6 +1,8 @@
-# run_tests.ps1 — test runner for bevel_bezier_corners.
-# Runs the bpy-free pure test with plain Python, then the headless operator
-# test under Blender background mode. Exits 1 if either process fails.
+# run_tests.ps1 — local test runner for the Blender add-ons.
+# Runs the three bpy-free pure tests with plain Python (run_pure,
+# run_phyllotaxis_pure, mutation_harness), then the Blender background-mode
+# gates (run_headless, run_phyllotaxis_headless, and the eval suite).
+# Mirrors the CI gate order. Exits 1 if any process fails.
 
 $blender = if ($env:BLENDER_EXE) { $env:BLENDER_EXE } else { 'C:\Program Files\Blender Foundation\Blender 5.1\blender.exe' }
 $root = (Resolve-Path "$PSScriptRoot\..")
@@ -66,8 +68,19 @@ try {
     $phylloheadlesscode = 1
 }
 
-if ($purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0 -or $phylloheadlesscode -ne 0) {
-    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode, run_phyllotaxis_headless.py=$phylloheadlesscode)"
+Write-Host "=== Eval suite ==="
+# --python-exit-code 1: forces exit 1 if run_evals.py raises (e.g. an add-on
+# fails to load or register), so a broken eval cannot false-pass.
+try {
+    & $blender --background --python-exit-code 1 --python "$root\evals\run_evals.py"
+    $evalcode = $LASTEXITCODE
+} catch {
+    Write-Host "TESTS_FAILED: run_evals.py threw: $_"
+    $evalcode = 1
+}
+
+if ($purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0 -or $phylloheadlesscode -ne 0 -or $evalcode -ne 0) {
+    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode, run_phyllotaxis_headless.py=$phylloheadlesscode, run_evals.py=$evalcode)"
     exit 1
 }
 

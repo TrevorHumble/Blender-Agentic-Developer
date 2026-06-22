@@ -39,7 +39,7 @@ issues/
 config/                            — repo-level config (github.txt holds the remote URL)
 .github/workflows/ci.yml           — CI pipeline; runs on every push and PR
 .claude/commands/build.md          — /build slash command that triggers a pipeline run
-.claude/hooks/review-gate.ps1      — Stop hook enforcing Ralph-loop verdict gate
+.claude/hooks/review-gate.ps1      — Stop hook for the Ralph-loop verdict gate (currently inert — see #46)
 .claude/settings.json              — Claude Code settings (hook registration)
 PLAN.md         — segment-by-segment build sequence
 BUILDLOG.md     — one-line entries appended after each commit or halt
@@ -197,6 +197,14 @@ state causes the hook to emit `{"decision":"block","reason":"..."}`, which re-in
 and keeps the loop running. A counter-file iteration cap (`MAX_ITERS = 25`) writes `CAP_HIT` and
 allows the stop only as a last-resort backstop against a model that never writes a verdict.
 
+**Current status (2026-06-21): this hook is INERT — the description above is the intended design, not
+the live behavior.** Nothing in the pipeline writes `.review_state/verdict.txt` (verified by repo-wide
+search: no orchestrator step, skill, or agent emits `PASS`/`EXIT_AUTHORIZED` to it). So the verdict-gate
+path is never exercised; every Stop event falls through to the `MAX_ITERS = 25` backstop, which then
+fails open. The hook therefore enforces nothing today, and its hard iteration cap would in fact terminate
+a long autonomous run early (contradicting the never-stop loop in `orchestrator.md`). Fix-or-delete is a
+governance decision for the product owner — tracked in **#46**, with the verifying evidence in its comments.
+
 ## Standards
 
 ### User story
@@ -264,7 +272,7 @@ The following have not yet shipped. Each becomes a future issue when the system 
 ### Delivered (no longer deferred)
 
 - CI enforcement (#0024) — `.github/workflows/ci.yml` runs the full test + mutation + eval suite on every push and PR via GitHub Actions.
-- Ralph-loop stop hooks (#0021) — `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook; enforces the verdict gate on every Stop event.
+- Ralph-loop stop hooks (#0021) — `.claude/hooks/review-gate.ps1` is registered as a Claude Code Stop hook. NOTE: it is currently INERT — nothing writes the verdict file it gates on, so it enforces nothing and only ever hits its iteration-cap backstop (see the "Current status" note above and #46). The registration shipped; the live enforcement did not.
 
 ## System-level change definition
 
