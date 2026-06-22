@@ -285,8 +285,13 @@ def _check_colinear_9pts(obj):
 # ---------------------------------------------------------------------------
 # Case: large_radius_clamped
 #   Cyclic POLY square (±1, ±1, 0); operator run with radius=5 (half-edge=1).
-#   Fillet radius is clamped so result is still geometrically valid.
-#   Expected: 8 points, all finite, every point within the original square's
+#   Fillet radius is clamped so the setback d lands every tangent point on an
+#   edge midpoint. At this radius each corner's T2 and the next corner's T1
+#   coincide on the shared edge's midpoint, so the operator MERGES those
+#   coincident knots: 8 raw knots collapse to 4 (the four edge midpoints), each
+#   a proper bezier knot with arc handles on both sides — a clean rounded shape
+#   with NO zero-length segments.
+#   Expected: 4 points, all finite, every point within the original square's
 #   bounding box (with a small epsilon for floating-point slop).
 # ---------------------------------------------------------------------------
 
@@ -297,14 +302,14 @@ def _build_large_radius_clamped():
     )
 
 
-def _check_large_8pts(obj):
+def _check_large_4pts(obj):
     sp, err = _first_bezier_spline(obj)
     if err:
         return False, err
     n = len(sp.bezier_points)
-    if n != 8:
-        return False, f"expected 8 bezier points after clamped fillet, got {n}"
-    return True, "8 bezier points"
+    if n != 4:
+        return False, f"expected 4 bezier points after coincident-knot merge, got {n}"
+    return True, "4 bezier points"
 
 
 def _check_large_all_finite(obj):
@@ -332,23 +337,21 @@ def _check_large_within_bounds(obj):
     return True, "all knots within original square bounds"
 
 
-# Expected .co for the clamped square (radius 5.0, half-edge 1.0), in
-# _corner_knots emit order (per corner: t1 then t2). These are the CLAMPED
-# geometry: with radius 5.0 the setback d clamps to min(half_prev, half_nxt)=1.0,
-# so every knot lands on an edge midpoint. Computed OFFLINE from the verified pure
-# rounded_corner (tests/run_pure.py), NOT imported here — cases.py runs under
-# Blender and the ground truth must be independent of the add-on under test.
-# This verifies the clamp produces CORRECT positions; the within-bounds check
-# alone passes for any in-bounds point, including a wrongly-clamped one.
+# Expected .co for the clamped square (radius 5.0, half-edge 1.0) AFTER the
+# coincident-knot merge. With radius 5.0 the setback d clamps to
+# min(half_prev, half_nxt)=1.0, so each corner's T2 and the next corner's T1
+# land on the SAME edge midpoint; the operator merges those coincident knots,
+# collapsing 8 raw knots to the 4 distinct edge midpoints. Computed OFFLINE
+# through the operator path (_corner_knots -> _resolve_straight_handles ->
+# _merge_coincident_knots), NOT imported here — cases.py runs under Blender and
+# the ground truth must be independent of the add-on under test. This verifies
+# the merge produces CORRECT, non-degenerate positions; the within-bounds check
+# alone passes for any in-bounds point, and would not catch duplicate knots.
 _LARGE_EXPECTED_CO = [
     (-1.0,  0.0, 0.0),
     ( 0.0, -1.0, 0.0),
-    ( 0.0, -1.0, 0.0),
-    ( 1.0,  0.0, 0.0),
     ( 1.0,  0.0, 0.0),
     ( 0.0,  1.0, 0.0),
-    ( 0.0,  1.0, 0.0),
-    (-1.0,  0.0, 0.0),
 ]
 
 
@@ -403,7 +406,7 @@ EVAL_CASES = [
         "name": "large_radius_clamped",
         "build": _build_large_radius_clamped,
         "checks": [
-            _check_large_8pts,
+            _check_large_4pts,
             _check_large_all_finite,
             _check_large_within_bounds,
             _check_large_positions,

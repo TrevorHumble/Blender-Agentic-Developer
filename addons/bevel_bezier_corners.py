@@ -233,6 +233,51 @@ def _resolve_straight_handles(records, cyclic):
     return out
 
 
+def _merge_coincident_knots(knots, cyclic, eps=1e-7):
+    """
+    Collapse adjacent knots whose positions coincide within *eps* into one.
+
+    When the fillet radius is large the per-corner setback clamps so that the
+    T2 of one corner and the T1 of the next both land on the shared edge's
+    midpoint — producing two knots at the same position (a zero-length segment)
+    each with a collapsed straight-side handle. Merging removes the duplicate:
+    the surviving knot keeps the FIRST knot's incoming handle (hl) and the
+    SECOND knot's outgoing handle (hr), so the curve stays smooth through the
+    meeting point.
+
+    Per-spline, order-preserving. For a cyclic spline the last and first knot
+    may also coincide; that pair is merged too (the survivor is written in the
+    first knot's slot). Returns a new list with no two consecutive (and, when
+    cyclic, no wrap-around) duplicate positions; for fewer than 2 knots, or
+    when no positions coincide, the input is returned unchanged in content.
+    """
+    m = len(knots)
+    if m < 2:
+        return list(knots)
+
+    def _coincident(a, b):
+        return ((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2) <= eps * eps
+
+    # Forward pass: fold each knot into the previous one when coincident,
+    # keeping the running knot's hl and adopting the incoming knot's hr.
+    merged = []
+    for rec in knots:
+        if merged and _coincident(merged[-1].co, rec.co):
+            prev = merged[-1]
+            merged[-1] = _Knot(co=prev.co, hl=prev.hl, hr=rec.hr)
+        else:
+            merged.append(rec)
+
+    # Cyclic wrap: if first and last now coincide, fold the last into the
+    # first (the first keeps the last knot's incoming handle).
+    if cyclic and len(merged) >= 2 and _coincident(merged[0].co, merged[-1].co):
+        last = merged.pop()
+        first = merged[0]
+        merged[0] = _Knot(co=first.co, hl=last.hl, hr=first.hr)
+
+    return merged
+
+
 def _write_bezier_spline(curve, spline_data):
     """
     Create one BEZIER spline in *curve* from a _SplineData record.
@@ -301,7 +346,8 @@ class CURVE_OT_bevel_bezier_corners(bpy.types.Operator):
 
             records  = _corner_knots(knots, cyclic, self.radius)
             resolved = _resolve_straight_handles(records, cyclic)
-            new_splines.append(_SplineData(cyclic=cyclic, knots=resolved))
+            merged   = _merge_coincident_knots(resolved, cyclic)
+            new_splines.append(_SplineData(cyclic=cyclic, knots=merged))
 
         # Write phase: rebuild from scratch.
         for sp in list(curve.splines):
