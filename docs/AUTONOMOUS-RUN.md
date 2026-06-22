@@ -32,6 +32,23 @@ Format: the ledger line defined in `agents/orchestrator.md` → "Autonomous time
   "out of the operational loop" contradicts the goal — should the orchestrator surface Blender-judgment
   checkpoints to Trevor (the "final eye"), or treat his absence as total?
 
+### RUN OUTCOME (summary for a returning reader; full ledger below)
+
+**Mission: make the gates REAL and PROVEN. Done and CI-verified end-to-end (incl. real Blender steps).**
+
+Shipped (12 commits, `a995f13..`, all pushed, every CI run green):
+- **Every gate now asserts real geometry, not counts** — bevel pure (handles + circular-arc midpoint), phyllotaxis pure (golden angle / radius / dome), bevel headless operator positions, phyllotaxis headless operator mesh, eval square + triangle (acute) positions.
+- **Mutation/tamper harness** (`tests/mutation_harness.py`) — breaks both add-ons, proves the pure tests catch it (`guards caught 6/6`), with per-mutant attribution (credits a catch only when the RIGHT guard fired) + a `MUTATION_SCORE` line. The North-Star "smoke detector," and it has teeth (proven both directions).
+- **Docs made honest** — removed the fictional ≥80% coverage gate (#44); marked the dead Stop-hook inert pending #46; refreshed test docs; eval added to the local runner.
+- **Engine hardened** — autonomous-run timing must be read from a real clock, never estimated (fixed mid-run after an 11m drift would have caused an early WRAP).
+- Closed #41, #42, #44. Filed #48 (CodeQL gap), #49 (ledger binding), #50 (mutation-test the Blender gates). Reconciled #35/#32; commented dead-hook evidence on #46; posted an SVG-editor security gate checklist on #40.
+
+Parked for Trevor (decisions only he can make — never blocked the run):
+- **#48 CodeQL** — claimed enabled in an old log, but zero analyses exist; enabling is a security setting (his call). Secret Scanning + push protection + Dependabot are verified ON.
+- **#46** — the Stop-hook is dead (nothing writes its verdict file); fix-or-delete is governance.
+- **#45 / CLAUDE.md "out of the operational loop" vs the goal's "final eye in Blender"** — the standing contradiction, his to resolve.
+- **#40 SVG editor** — the product direction; security gates pre-scoped.
+
 ### RUN STARTED — 2026-06-21 18:15:33 (epoch 1782065733) · budget 120m · WRAP at 20:15:33 (epoch 1782072933)
 - `[18:15] elapsed=0m/budget=120m | selector→DO pre-flight-arch+quality-review | next=architecture+quality review (self + 2 adversaries) then fix before P2`
 - `[18:19] elapsed=4m/budget=120m | selector→DO pre-flight-review-done | next=fix-cluster: tests→harness→doc-honesty→security. Both adversaries PASS-equivalent (converged punch-list); confirmed plan P2 priority. Findings: phyllotaxis 0 tests, bevel ignores handles, no mutation harness, coverage-80% fiction, CodeQL absent, timing never real.`
@@ -50,3 +67,5 @@ Format: the ledger line defined in `agents/orchestrator.md` → "Autonomous time
 - `[19:19] elapsed=64.1m/budget=120m | selector->CASCADE completeness-critic | next=independent whole-run audit (8 commits a995f13..c2e2180) for regressions/contradictions/loose-ends + board sync; act on findings, then keep improving until WRAP`
 - `[19:25] elapsed=69.8m/budget=120m | selector->DO phyllotaxis-operator-test(commit+CI) | next=commit phyllotaxis headless test (Opus PASS, #35 operator half), push, then DESIGN.md dead-hook honesty fix (completeness-critic MAJOR) + tests/README refresh`
 - `[19:29] elapsed=74.4m/budget=120m | selector->DO doc-honesty(commit+CI) | next=commit DESIGN dead-hook annotation (2 reviewers PASS) + tests/README refresh + eval-in-local-runner, push, watch CI, approach WRAP`
+- `[19:32] elapsed=77.4m/budget=120m | selector->CASCADE deep-research | next=research SVG-parsing security gates (forward prep for #40, ties to CodeQL #48 + Goal 2); post checklist to #40, then approach WRAP`
+- `[19:43] elapsed=88.4m/budget=120m | selector->DO eval-clamp-positions(commit+CI) | next=commit clamp position check (Opus PASS, duplicate-safety proven; every eval case now position-asserts), push, watch CI, then WRAP window`

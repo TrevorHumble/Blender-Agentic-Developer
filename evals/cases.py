@@ -332,6 +332,34 @@ def _check_large_within_bounds(obj):
     return True, "all knots within original square bounds"
 
 
+# Expected .co for the clamped square (radius 5.0, half-edge 1.0), in
+# _corner_knots emit order (per corner: t1 then t2). These are the CLAMPED
+# geometry: with radius 5.0 the setback d clamps to min(half_prev, half_nxt)=1.0,
+# so every knot lands on an edge midpoint. Computed OFFLINE from the verified pure
+# rounded_corner (tests/run_pure.py), NOT imported here — cases.py runs under
+# Blender and the ground truth must be independent of the add-on under test.
+# This verifies the clamp produces CORRECT positions; the within-bounds check
+# alone passes for any in-bounds point, including a wrongly-clamped one.
+_LARGE_EXPECTED_CO = [
+    (-1.0,  0.0, 0.0),
+    ( 0.0, -1.0, 0.0),
+    ( 0.0, -1.0, 0.0),
+    ( 1.0,  0.0, 0.0),
+    ( 1.0,  0.0, 0.0),
+    ( 0.0,  1.0, 0.0),
+    ( 0.0,  1.0, 0.0),
+    (-1.0,  0.0, 0.0),
+]
+
+
+def _check_large_positions(obj):
+    sp, err = _first_bezier_spline(obj)
+    if err:
+        return False, err
+    produced = [tuple(bp.co[:3]) for bp in sp.bezier_points]
+    return _match_positions_unordered(produced, _LARGE_EXPECTED_CO, 1e-4)
+
+
 # ---------------------------------------------------------------------------
 # EVAL_CASES — the list consumed by run_evals.py
 # ---------------------------------------------------------------------------
@@ -378,6 +406,7 @@ EVAL_CASES = [
             _check_large_8pts,
             _check_large_all_finite,
             _check_large_within_bounds,
+            _check_large_positions,
         ],
         "radius": 5.0,
     },
