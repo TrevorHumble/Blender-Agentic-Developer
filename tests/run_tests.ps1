@@ -25,6 +25,15 @@ try {
     $purecode = 1
 }
 
+Write-Host "=== Pure phyllotaxis test ==="
+try {
+    & $python "$root\tests\run_phyllotaxis_pure.py"
+    $phyllocode = $LASTEXITCODE
+} catch {
+    Write-Host "TESTS_FAILED: run_phyllotaxis_pure.py threw: $_"
+    $phyllocode = 1
+}
+
 Write-Host "=== Headless operator test ==="
 # --python-exit-code 1: Blender background mode exits 0 even on an unhandled
 # Python exception by default; this forces exit 1 if run_headless.py raises
@@ -37,8 +46,8 @@ try {
     $headlesscode = 1
 }
 
-if ($purecode -ne 0 -or $headlesscode -ne 0) {
-    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_headless.py=$headlesscode)"
+if ($purecode -ne 0 -or $phyllocode -ne 0 -or $headlesscode -ne 0) {
+    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, run_headless.py=$headlesscode)"
     exit 1
 }
 
