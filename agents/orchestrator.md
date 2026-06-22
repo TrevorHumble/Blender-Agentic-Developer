@@ -108,11 +108,19 @@ because a queue emptied or the work "felt done." Full procedure and live state: 
 - **Blockers are revisited, not parked forever.** Never accept a blocker on first contact; route around it
   now, but re-verify and research a workaround in the Cascade. Pre-solved roadblocks are verified by running,
   not asserted.
-- **Non-blocking by default, with a bounded stop-list.** Decisions for Trevor are surfaced as one-line
-  non-blocking notes he answers in chat; they never stall the run. **The only things that MUST stop and
-  surface before the budget** are: an irreversible/destructive action with no in-loop undo (force-push,
-  deleting data), anything outside the in-license constraint, a security defect, or a scope decision only the
-  product owner can make. The `fix-now` pause (`skills/capture-system-defect.md`) still applies.
+- **Decide from the goals; do not punt.** Before surfacing ANY decision, run it through the goals
+  (`README.md#the-goal-this-year`) and constraints. If the goals, CLAUDE.md, or an explicit instruction
+  settle it — or it is a technical/implementation tradeoff — decide it and act; do NOT ask. Never ask
+  permission to continue authorized work. A question answerable by re-reading the goals is not a question for
+  Trevor. When unsure whether the goals decide it, spawn a consultant to *derive* the goal-aligned answer —
+  the consultant resolves the call; it does not hand it back to Trevor.
+- **Non-blocking by default, with a bounded stop-list.** The few genuinely owner-only decisions are surfaced
+  as one-line non-blocking notes he answers in chat; they never stall the run. **The only things that MUST
+  stop and surface before the budget** are: an irreversible/destructive action with no in-loop undo
+  (force-push, deleting data), anything outside the in-license constraint, a security defect, or a scope
+  decision that is BOTH irreversible/owner-exclusive AND not determined by the goals (not merely a technical
+  choice with a tradeoff — those are the orchestrator's to make from the goals). The `fix-now` pause
+  (`skills/capture-system-defect.md`) still applies.
 - The standard is excellence, not the minimum: push the loop harder and do more, held to the North Star.
 
 ---
