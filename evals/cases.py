@@ -67,6 +67,35 @@ def _is_finite(v):
     return all(math.isfinite(x) for x in v)
 
 
+def _match_positions_unordered(produced, expected, tol):
+    """Return (ok, msg) — every expected point must have a DISTINCT produced
+    match within tol (each produced point consumed at most once).
+
+    Tries index-by-index first (the operator preserves insertion order); on
+    mismatch, falls back to distinct set matching so a mere ordering difference
+    does not red-fail. Only a wrong/missing position fails. Mirrors the matcher
+    in tests/run_headless.py.
+    """
+    def _close(p, q):
+        return sum((p[i] - q[i]) ** 2 for i in range(3)) ** 0.5 <= tol
+
+    n = len(expected)
+    if len(produced) != n:
+        return False, f"expected {n} points, got {len(produced)}"
+
+    if all(_close(produced[k], expected[k]) for k in range(n)):
+        return True, f"{n} points match expected positions (in order)"
+
+    # Order-independent fallback: consume each produced point at most once.
+    remaining = list(produced)
+    for exp in expected:
+        idx = next((i for i, got in enumerate(remaining) if _close(got, exp)), None)
+        if idx is None:
+            return False, f"no produced point within tol of expected {exp}"
+        remaining.pop(idx)
+    return True, f"{n} points match expected positions (unordered)"
+
+
 # ---------------------------------------------------------------------------
 # Case: square_r04
 #   4 cyclic POLY corners (±1, ±1, 0) → 8 BEZIER points, cyclic.
@@ -105,6 +134,32 @@ def _check_square_8pts(obj):
     return True, f"8 bezier points"
 
 
+# Expected .co for the square (radius 0.4), in _corner_knots emit order
+# (per corner: t1 then t2). Computed OFFLINE from the verified pure
+# rounded_corner (tests/run_pure.py), NOT imported here — cases.py runs under
+# Blender and the ground truth must be independent of the add-on under test.
+# Count alone is insufficient: 8 points at the origin or the wrong radius would
+# pass an 8-count check; only a position check catches wrong geometry.
+_SQUARE_EXPECTED_CO = [
+    (-1.0, -0.6, 0.0),
+    (-0.6, -1.0, 0.0),
+    ( 0.6, -1.0, 0.0),
+    ( 1.0, -0.6, 0.0),
+    ( 1.0,  0.6, 0.0),
+    ( 0.6,  1.0, 0.0),
+    (-0.6,  1.0, 0.0),
+    (-1.0,  0.6, 0.0),
+]
+
+
+def _check_square_positions(obj):
+    sp, err = _first_bezier_spline(obj)
+    if err:
+        return False, err
+    produced = [tuple(bp.co[:3]) for bp in sp.bezier_points]
+    return _match_positions_unordered(produced, _SQUARE_EXPECTED_CO, 1e-4)
+
+
 # ---------------------------------------------------------------------------
 # Case: triangle
 #   3 cyclic POLY corners → 6 BEZIER points.
@@ -125,6 +180,31 @@ def _check_triangle_6pts(obj):
     if n != 6:
         return False, f"expected 6 bezier points, got {n}"
     return True, "6 bezier points"
+
+
+# Expected .co for the acute triangle (radius 0.4), in _corner_knots emit order
+# (per corner: t1 then t2). Computed OFFLINE from the verified pure
+# rounded_corner (tests/run_pure.py), NOT imported here — cases.py runs under
+# Blender and the ground truth must be independent of the add-on under test.
+# This is the only end-to-end positional assertion at non-90° (acute) corners:
+# a 6-count check passes even if the fillet were placed at wrong angles, so the
+# exact positions are what prove the acute-corner geometry is correct.
+_TRIANGLE_EXPECTED_CO = [
+    ( 0.346346,  0.900555, 0.0),
+    (-0.346346,  0.900555, 0.0),
+    (-0.953269, -0.149889, 0.0),
+    (-0.606923, -0.75,     0.0),
+    ( 0.606923, -0.75,     0.0),
+    ( 0.953269, -0.149889, 0.0),
+]
+
+
+def _check_triangle_positions(obj):
+    sp, err = _first_bezier_spline(obj)
+    if err:
+        return False, err
+    produced = [tuple(bp.co[:3]) for bp in sp.bezier_points]
+    return _match_positions_unordered(produced, _TRIANGLE_EXPECTED_CO, 1e-4)
 
 
 # ---------------------------------------------------------------------------
@@ -264,6 +344,7 @@ EVAL_CASES = [
             _check_square_is_bezier,
             _check_square_is_cyclic,
             _check_square_8pts,
+            _check_square_positions,
         ],
         # radius defaults to 0.4 in run_evals.py
     },
@@ -272,6 +353,7 @@ EVAL_CASES = [
         "build": _build_triangle,
         "checks": [
             _check_triangle_6pts,
+            _check_triangle_positions,
         ],
     },
     {
