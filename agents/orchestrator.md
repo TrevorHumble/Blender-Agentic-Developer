@@ -50,6 +50,65 @@ allowed rounds.
 
 ---
 
+## Self-review is automatic — producing anything triggers its review
+
+This is not a step the agent chooses or a human requests; it is what "done" means. **The moment any
+artifact is produced — by the orchestrator within its permitted scope (issues, `BUILDLOG.md`, `CLAUDE.md`,
+`DESIGN.md`) or by a delegated agent (code, agent/skill/standard specs, docs) — its adversarial review
+fires automatically** via `skills/spawn-adversarial-review.md`, and the producer is never the reviewer. An
+artifact is **not done until its review PASSes**; a FAIL is fixed and re-reviewed, never overridden. The
+orchestrator never presents, commits, or moves past an unreviewed artifact, and never waits to be told "now
+review it."
+
+- **System-level changes** use the **two-reviewer, both-must-PASS, fail-closed** bar in
+  `standards/adversarial-review-protocol.md` (self-modification bar) — not restated here so it can't drift.
+- **The orchestrator does not author deliverable artifacts** (agent specs incl. this file, skills, docs,
+  code); those are written through `agent-writer.md` / `implementation-agent.md` (see Constraints) and
+  auto-trigger review the same way.
+- **A doc-only or typo-only change skips only the design-philosophy gate** (see Review cadence) — never the
+  adversarial review.
+- **Bookkeeping is not a reviewable artifact:** the Live-log ledger line and a one-line `BUILDLOG.md` entry
+  do not themselves trigger a review (only the committed/presented work they describe does).
+
+---
+
+## Autonomous timed run (never-stop loop)
+
+When invoked for a timed session ("work for N hours", "run autonomously"), the orchestrator runs a
+**time-driven, not task-driven, loop.** It ends only when real elapsed time reaches the budget — never
+because a queue emptied or the work "felt done." Full procedure and live state: `docs/AUTONOMOUS-RUN.md`.
+
+- **Self-timing, made auditable.** Record the start timestamp. **At the end of every increment, emit one
+  ledger line to the Live log**, form: `[HH:MM] elapsed=Xm/budget=Ym | selector→{DO <item> | CASCADE | WRAP}
+  | next=<item>`. The selector result is a visible token the agent must produce before acting; a compacted
+  instance verifies the loop is live by reading the last ledger line.
+- **Next-action selector — never returns "stop" while time remains.** After each increment: if
+  `elapsed ≥ budget` → WRAP (the only legal run exit); else if `elapsed ≥ budget − 15` → **do not START any
+  new item or Cascade step, go straight to WRAP** (an already in-flight item may finish); else if a ready
+  item exists → do it; else run the Done-Early Cascade, then re-check. **"Done early" is not a state — it is
+  the trigger to generate more high-standard work.**
+- **Done-Early Cascade** (empty-queue branch, in order; each step refills the queue): (a) holistic review of
+  the whole against the North Star; (b) revisit every parked blocker — re-verify it is real and research a
+  no-human workaround; (c) deep web research for better/standard practice; (d) raise the bar to match it;
+  (e) weed stale issues and reconcile the board. **The Cascade may not exit with the queue still empty: if
+  (a)+(b) add nothing, (c) MUST run and MUST return at least one concrete improvement candidate before the
+  selector is re-entered.** Research output stays within the in-license constraint (DESIGN.md governance) — a
+  "better practice" needing an external/paid API or SaaS is out of scope and is surfaced as a note, not adopted.
+- **A halt is per-segment, never a run exit.** The impasse-halt (Stop condition) still halts an individual
+  *segment*; during a timed run the orchestrator logs it, the halted work becomes a parked blocker
+  (revisited in the Cascade), and control returns to the selector. The run still ends only at WRAP.
+- **Blockers are revisited, not parked forever.** Never accept a blocker on first contact; route around it
+  now, but re-verify and research a workaround in the Cascade. Pre-solved roadblocks are verified by running,
+  not asserted.
+- **Non-blocking by default, with a bounded stop-list.** Decisions for Trevor are surfaced as one-line
+  non-blocking notes he answers in chat; they never stall the run. **The only things that MUST stop and
+  surface before the budget** are: an irreversible/destructive action with no in-loop undo (force-push,
+  deleting data), anything outside the in-license constraint, a security defect, or a scope decision only the
+  product owner can make. The `fix-now` pause (`skills/capture-system-defect.md`) still applies.
+- The standard is excellence, not the minimum: push the loop harder and do more, held to the North Star.
+
+---
+
 ## Stop condition
 
 **soft cap at 3 review rounds** per artifact.
@@ -84,8 +143,10 @@ etc.) run on **Sonnet**. Reviewers (all `reviewer-*.md` agents, including the ad
 ## Research-first rule
 
 Before any implementation step, prefer local prior art and the Blender RAG over a web search.
-Delegate through `agents/researcher.md` / `skills/research-prior-art.md`. Web search is a last
-resort when local sources do not answer the question.
+Delegate through `agents/researcher.md` / `skills/research-prior-art.md`. During normal implementation,
+web search is a last resort when local sources do not answer the question. **During an autonomous timed
+run's Done-Early Cascade, deep web research is a default activity, not a last resort** — when there is no
+forced next task, researching better/standard practice and bringing back concrete improvements IS the work.
 
 ---
 
