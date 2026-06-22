@@ -6,6 +6,17 @@ This repo is a Claude Code orchestrator that builds and maintains Blender add-on
 
 ---
 
+## North Star (the goal this serves)
+
+This system exists for one person and one aim: **Trevor — a creator who can't read code — directing the building of his Blender tools and trusting the result, so the time he'd spend policing AI output goes into his animation and his master's instead.** Two goals carry it, and every decision serves them:
+
+1. **Trust without checking** — the tool enforces his quality bar automatically and proves it (including by catching deliberately-broken work), so he can direct the work and trust it without reading the code; where a machine can't judge, he's the final eye in Blender.
+2. **Software that holds up** — what it builds is durable, secure, and stays clean as it grows, built to a bar a developer could pick up and trust.
+
+Full goal, outcomes, and what's out of scope: [README.md](README.md#the-goal-this-year).
+
+---
+
 ## Pipeline
 
 Every unit of work — add-on features, skill updates, agent changes, documentation gaps — flows through this sequence:
