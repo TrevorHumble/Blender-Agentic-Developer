@@ -78,11 +78,19 @@ When invoked for a timed session ("work for N hours", "run autonomously"), the o
 **time-driven, not task-driven, loop.** It ends only when real elapsed time reaches the budget — never
 because a queue emptied or the work "felt done." Full procedure and live state: `docs/AUTONOMOUS-RUN.md`.
 
-- **Self-timing, made auditable.** Record the start timestamp. **At the end of every increment, emit one
+- **Self-timing, made auditable.** Record the start timestamp **by running a real system-clock command**
+  (PowerShell `[int][double]::Parse((Get-Date -UFormat %s))` for epoch seconds, or `date +%s` on Unix), and
+  derive every ledger line's `elapsed` the same way: read the clock fresh, then compute `elapsed = (now −
+  start)/60`. **Never estimate, infer, or carry-forward `elapsed` by feel** — a ledger line whose `elapsed`
+  was not derived from a fresh clock read is invalid and must be discarded and re-taken. This is not
+  bookkeeping hygiene: an over-estimate makes the loop hit the WRAP threshold and stop before the budget — the
+  exact early-exit failure the never-stop loop exists to prevent. **At the end of every increment, emit one
   ledger line to the Live log**, form: `[HH:MM] elapsed=Xm/budget=Ym | selector→{DO <item> | CASCADE | WRAP}
   | next=<item>`. The selector result is a visible token the agent must produce before acting; a compacted
   instance verifies the loop is live by reading the last ledger line.
-- **Next-action selector — never returns "stop" while time remains.** After each increment: if
+- **Next-action selector — never returns "stop" while time remains.** The `elapsed` driving EVERY selector
+  decision — above all the WRAP decision — must come from a clock read taken at that moment, not from the last
+  ledger line's number. After each increment, read the clock fresh, then: if
   `elapsed ≥ budget` → WRAP (the only legal run exit); else if `elapsed ≥ budget − 15` → **do not START any
   new item or Cascade step, go straight to WRAP** (an already in-flight item may finish); else if a ready
   item exists → do it; else run the Done-Early Cascade, then re-check. **"Done early" is not a state — it is
