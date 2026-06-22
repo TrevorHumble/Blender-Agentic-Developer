@@ -36,5 +36,8 @@ jobs:
       - name: Headless operator test
         run: ./blender/blender --background --factory-startup --python-exit-code 1 --python tests/run_headless.py
 
+      - name: Phyllotaxis headless operator test
+        run: ./blender/blender --background --factory-startup --python-exit-code 1 --python tests/run_phyllotaxis_headless.py
+
       - name: Eval suite
         run: ./blender/blender --background --factory-startup --python-exit-code 1 --python evals/run_evals.py

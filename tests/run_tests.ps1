@@ -55,8 +55,19 @@ try {
     $headlesscode = 1
 }
 
-if ($purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0) {
-    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode)"
+Write-Host "=== Phyllotaxis headless operator test ==="
+# --python-exit-code 1: forces exit 1 if run_phyllotaxis_headless.py raises
+# (e.g. the add-on fails to load or register), so a broken test cannot false-pass.
+try {
+    & $blender --background --python-exit-code 1 --python "$root\tests\run_phyllotaxis_headless.py"
+    $phylloheadlesscode = $LASTEXITCODE
+} catch {
+    Write-Host "TESTS_FAILED: run_phyllotaxis_headless.py threw: $_"
+    $phylloheadlesscode = 1
+}
+
+if ($purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0 -or $phylloheadlesscode -ne 0) {
+    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode, run_phyllotaxis_headless.py=$phylloheadlesscode)"
     exit 1
 }
 
