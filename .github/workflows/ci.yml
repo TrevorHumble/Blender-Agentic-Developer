@@ -5,6 +5,24 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install lint + security tools
+        run: pip install ruff bandit
+
+      - name: Ruff (Pyflakes + bugbear) on addons
+        run: ruff check --select F,B addons/
+
+      - name: Bandit security scan on addons
+        run: bandit -r addons/
+
   test:
     runs-on: ubuntu-latest
     steps:

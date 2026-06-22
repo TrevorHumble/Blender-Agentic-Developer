@@ -18,6 +18,34 @@ if (-not $python) {
     exit 1
 }
 
+Write-Host "=== Lint + security (ruff/bandit) ==="
+# Pure-Python, no Blender — fast, so it runs first. Mirrors the CI 'lint' job:
+# ruff F,B (Pyflakes + bugbear) and bandit, both scoped to addons/.
+# Guard: if ruff/bandit aren't installed, SKIP with a notice (lintcode stays 0)
+# rather than fail the whole run over a missing dev tool — matches how the
+# runner treats optional tooling. CI is the authoritative lint gate.
+$lintcode = 0
+& $python -c "import ruff, bandit" 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "LINT_SKIPPED: ruff/bandit not installed (pip install ruff bandit) — CI is the authoritative gate"
+} else {
+    try {
+        & $python -m ruff check --select F,B "$root\addons"
+        $ruffcode = $LASTEXITCODE
+    } catch {
+        Write-Host "TESTS_FAILED: ruff threw: $_"
+        $ruffcode = 1
+    }
+    try {
+        & $python -m bandit -r "$root\addons"
+        $banditcode = $LASTEXITCODE
+    } catch {
+        Write-Host "TESTS_FAILED: bandit threw: $_"
+        $banditcode = 1
+    }
+    if ($ruffcode -ne 0 -or $banditcode -ne 0) { $lintcode = 1 }
+}
+
 Write-Host "=== Pure geometry test ==="
 try {
     & $python "$root\tests\run_pure.py"
@@ -79,8 +107,8 @@ try {
     $evalcode = 1
 }
 
-if ($purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0 -or $phylloheadlesscode -ne 0 -or $evalcode -ne 0) {
-    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode, run_phyllotaxis_headless.py=$phylloheadlesscode, run_evals.py=$evalcode)"
+if ($lintcode -ne 0 -or $purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0 -or $phylloheadlesscode -ne 0 -or $evalcode -ne 0) {
+    Write-Host "TESTS_FAILED (lint=$lintcode, run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode, run_phyllotaxis_headless.py=$phylloheadlesscode, run_evals.py=$evalcode)"
     exit 1
 }
 
