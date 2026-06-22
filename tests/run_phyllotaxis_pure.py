@@ -21,7 +21,7 @@ sys.modules['bpy'] = stub
 sys.modules['bpy.props'] = props
 
 ns = {}
-addon = os.path.join(os.path.dirname(__file__), '..', 'addons', 'phyllotaxis.py')
+addon = os.environ.get('PHYLLO_ADDON_PATH') or os.path.join(os.path.dirname(__file__), '..', 'addons', 'phyllotaxis.py')
 exec(open(addon, encoding='utf-8').read(), ns)
 phyllotaxis_points = ns['phyllotaxis_points']
 

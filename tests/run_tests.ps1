@@ -34,6 +34,15 @@ try {
     $phyllocode = 1
 }
 
+Write-Host "=== Mutation/tamper gate ==="
+try {
+    & $python "$root\tests\mutation_harness.py"
+    $mutationcode = $LASTEXITCODE
+} catch {
+    Write-Host "TESTS_FAILED: mutation_harness.py threw: $_"
+    $mutationcode = 1
+}
+
 Write-Host "=== Headless operator test ==="
 # --python-exit-code 1: Blender background mode exits 0 even on an unhandled
 # Python exception by default; this forces exit 1 if run_headless.py raises
@@ -46,8 +55,8 @@ try {
     $headlesscode = 1
 }
 
-if ($purecode -ne 0 -or $phyllocode -ne 0 -or $headlesscode -ne 0) {
-    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, run_headless.py=$headlesscode)"
+if ($purecode -ne 0 -or $phyllocode -ne 0 -or $mutationcode -ne 0 -or $headlesscode -ne 0) {
+    Write-Host "TESTS_FAILED (run_pure.py=$purecode, run_phyllotaxis_pure.py=$phyllocode, mutation_harness.py=$mutationcode, run_headless.py=$headlesscode)"
     exit 1
 }
 

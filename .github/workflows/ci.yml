@@ -20,6 +20,9 @@ jobs:
       - name: Pure phyllotaxis test (bpy-free)
         run: python tests/run_phyllotaxis_pure.py
 
+      - name: Mutation/tamper gate
+        run: python tests/mutation_harness.py
+
       - name: Install Blender runtime deps
         run: sudo apt-get update && sudo apt-get install -y libxrender1 libxi6 libxxf86vm1 libxfixes3 libxkbcommon0 libsm6 libgl1
 

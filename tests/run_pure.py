@@ -26,7 +26,7 @@ sys.modules['bpy'] = stub
 sys.modules['bpy.props'] = props
 
 ns = {}
-addon = os.path.join(os.path.dirname(__file__), '..', 'addons', 'bevel_bezier_corners.py')
+addon = os.environ.get('BEVEL_ADDON_PATH') or os.path.join(os.path.dirname(__file__), '..', 'addons', 'bevel_bezier_corners.py')
 exec(open(addon, encoding='utf-8').read(), ns)
 rounded_corner = ns['rounded_corner']
 
