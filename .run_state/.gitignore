@@ -1,0 +1,3 @@
+# Local run state (active-run marker + STOP sentinel + turn counter). Ephemeral.
+*
+!.gitignore

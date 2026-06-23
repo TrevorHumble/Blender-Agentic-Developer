@@ -87,6 +87,7 @@ When invoked for a timed session ("work for N hours", "run autonomously"), the o
 **time-driven, not task-driven, loop.** It ends only when real elapsed time reaches the budget — never
 because a queue emptied or the work "felt done." Full procedure and live state: `docs/AUTONOMOUS-RUN.md`.
 
+- **Arm the loop-gate (mechanical, not just discipline).** At run start, run `powershell -File tools/start-run.ps1 -Minutes N`. This writes `.run_state/run.json`, which arms the `loop-gate` Stop hook (`.claude/hooks/loop-gate.ps1`) to BLOCK any attempt to end a turn before the clock budget is spent — so the never-stop loop is enforced by the harness, not only by the rules below. It is clock-driven (releases automatically at the budget), fails open on any error, and only activates while a run is in progress, so it cannot trap a normal session. Emergency brake for a genuine must-stop: `powershell -File tools/stop-run.ps1` (or create `.run_state/STOP`). The rules below define HOW to fill the time; the gate guarantees the time is filled.
 - **Self-timing, made auditable.** Record the start timestamp **by running a real system-clock command**
   (PowerShell `[int][double]::Parse((Get-Date -UFormat %s))` for epoch seconds, or `date +%s` on Unix), and
   derive every ledger line's `elapsed` the same way: read the clock fresh, then compute `elapsed = (now −

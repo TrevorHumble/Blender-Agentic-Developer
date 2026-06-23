@@ -196,6 +196,22 @@ loop it was meant to protect. A dead safety mechanism documented as live is wors
 code-blind owner. If tooling-enforced loop continuation is ever wanted, it must be designed fresh
 against the clock-driven never-stop model, not revived from this gate.
 
+**Loop gate (`.claude/hooks/loop-gate.ps1`) — LIVE (2026-06-23), the fresh clock-driven successor this
+section prescribed.** A Stop hook that, during an explicit timed run, blocks the model from ending its turn
+until the clock budget is spent — the tooling-enforced never-stop loop, forcing what was previously only the
+orchestrator's discipline. It corrects every flaw of the deleted hook: the release condition is the real
+clock (`Get-Date -UFormat %s`), not a verdict file nothing writes, so it cannot dead-gate; it activates only
+while `.run_state/run.json` exists (written by `tools/start-run.ps1`) and FAILS OPEN on any error, so it can
+never trap a normal session; it releases automatically once `now >= end_epoch`; and `tools/stop-run.ps1` (or
+a `.run_state/STOP` sentinel) is an always-available emergency brake. Runaway token-burn is bounded too: if the model
+is already continuing from the hook (`stop_hook_active`) and stops again within ~25s (no real work), that
+counts as churn, and after ~6 such empty turns the gate releases the session (real work between stops resets
+the count and forcing resumes); a high absolute per-run turn cap is a final circuit breaker. All three
+breakers RELEASE (never trap) and only true budget-expiry disarms the run — time is the primary bound. Project-scoped: fires only for in-repo sessions, where the orchestrator actually runs. Enforcement
+boundary: it forces continuation of the session's turns; it does not by itself make the work each turn
+high-value — that is the Done-Early Cascade's job (`orchestrator.md`). Paired with the commit gate below, the
+loop is now forced at both ends: you cannot stop early, and you cannot commit unreviewed.
+
 **Commit gate (`.githooks/pre-commit`) — LIVE (2026-06-23), successor to the deleted Stop-hook.**
 This is the first mechanical forcing of "no unreviewed work reaches a commit" — the gap the
 2026-06-22 forced-loop audit named the worst in the system (the review pipeline was markdown the
