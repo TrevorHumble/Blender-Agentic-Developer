@@ -1,0 +1,4 @@
+# Local gate state (per-diff verdicts). Ephemeral -- not the audit trail.
+# The durable record is reviews/ and BUILDLOG.md.
+*
+!.gitignore

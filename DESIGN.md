@@ -196,6 +196,29 @@ loop it was meant to protect. A dead safety mechanism documented as live is wors
 code-blind owner. If tooling-enforced loop continuation is ever wanted, it must be designed fresh
 against the clock-driven never-stop model, not revived from this gate.
 
+**Commit gate (`.githooks/pre-commit`) — LIVE (2026-06-23), successor to the deleted Stop-hook.**
+This is the first mechanical forcing of "no unreviewed work reaches a commit" — the gap the
+2026-06-22 forced-loop audit named the worst in the system (the review pipeline was markdown the
+model could silently skip). A git-native `pre-commit` hook runs at true commit time and blocks the
+commit unless `.review_state/verdict.json` records a PASS whose `tree_oid` equals `git write-tree`
+of the staged index. `tools/review_verdict.ps1` records that verdict (from the reviewers' real
+result); `tools/check-gate.ps1` asserts the gate is active; `tools/setup-hooks.ps1` activates it
+(`core.hooksPath -> .githooks`). It is git-native, not a Claude hook, deliberately: it then covers
+`git commit -a`/amend/pathspec/untracked content and cannot be regex-bypassed or wrongly fire on a
+`grep "git commit"`. It learns the deleted hook's lesson — the verdict file is actually written by
+the pipeline (orchestrator step 6), and it fails CLOSED.
+
+*Enforcement boundary (stated honestly so a future audit isn't misled):* the hook enforces only on a
+working copy where it is active and not bypassed with `git commit --no-verify`. It does NOT stop a
+deliberately forged verdict (same actor can write one), `--no-verify`, or an unconfigured clone.
+Two backstops narrow those: a CI integrity check (`.github/workflows/ci.yml`) fails `main` red if
+the gate file is deleted or LF-corrupted, and the run-start `check-gate.ps1` assertion stops an
+orchestrator from trusting a gate that isn't on. The remaining gap — proving a review *genuinely
+happened* per commit — is not closeable by a local hook or any forgeable committed record; it is
+closed only by the program-driven loop (P2), where the verdict is produced by a reviewer agent call
+in control flow rather than asserted by the committer. The gate is a strong forgetting/stale guard
+and the durable floor P2 builds on, not a claim of unforgeable per-commit review.
+
 ## Standards
 
 ### User story

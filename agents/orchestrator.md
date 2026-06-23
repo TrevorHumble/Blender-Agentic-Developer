@@ -42,7 +42,7 @@ allowed rounds.
    via `skills/spawn-adversarial-review.md`. Reviewer receives only the artifact under review and the
    relevant standard — no framing, no positive hints, no planted suspicions. See
    `standards/adversarial-review-protocol.md` for the full de-bias and spawning rules.
-6. **Commit** — direct `git commit` with a short message. Append a one-line entry to `BUILDLOG.md`.
+6. **Commit** — once per run, before the first commit, **assert the gate is live**: `powershell -File tools/check-gate.ps1` (if it errors, run `tools/setup-hooks.ps1`; never proceed assuming a gate that isn't on — an unconfigured clone enforces nothing). The gate's introducing commit must also self-certify (record its own verdict first — dogfooding is expected, not a malfunction). On the reviewers' PASS, first **record the verdict**: `powershell -File tools/review_verdict.ps1 -Verdict PASS -Reviewers "<who>"` (binds it to the exact staged tree). Then `git commit` with a short message. The repo's `pre-commit` gate (`.githooks/pre-commit`, active via `core.hooksPath` — run `tools/setup-hooks.ps1` once per working copy) blocks any commit whose staged tree has no matching PASS verdict, so recording the reviewers' real result is a required, mechanical step. If the gate blocks you, the fix is to run the review and record its genuine verdict — never to forge one. Append a one-line entry to `BUILDLOG.md`.
    Then **close the GitHub issue** for this work (`gh issue close`, referencing the commit) so the board
    matches reality. Before declaring the segment done, spawn `agents/reviewer-tracker-sync.md` — it FAILs
    if the board is out of sync with the issue files / BUILDLOG. The board is kept current at every

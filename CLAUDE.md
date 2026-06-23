@@ -25,7 +25,7 @@ Every unit of work — add-on features, skill updates, agent changes, documentat
 2. `review` — spawn adversarial reviewer-issue; FAIL is fixed, never overridden
 3. `implement` — spawn implementation agent with full handoff (issue + prior art); it produces the diff, no PR — the orchestrator is the sole committer
 4. `review` — spawn adversarial reviewer-pr against the diff; FAIL is fixed, never overridden
-5. `commit` — on PASS the orchestrator commits directly to `main` and appends a one-line entry to `BUILDLOG.md`. After every push, watch CI to green and never knowingly leave `main` red — a red `main` is fixed or reverted before proceeding (see `agents/orchestrator.md`).
+5. `commit` — on PASS, **record the reviewers' verdict** (`powershell -File tools/review_verdict.ps1 -Verdict PASS -Reviewers ...`), then commit directly to `main`. The `pre-commit` gate (`.githooks/pre-commit`) mechanically blocks any commit whose staged tree has no matching PASS verdict — recording the real verdict is a required step, not optional, and forging one is never the fix. Append a one-line entry to `BUILDLOG.md`. After every push, watch CI to green and never knowingly leave `main` red — a red `main` is fixed or reverted before proceeding (see `agents/orchestrator.md`).
 
 ---
 

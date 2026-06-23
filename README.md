@@ -93,3 +93,7 @@ python tests/mutation_harness.py     # the tamper gate
 ## Build status
 
 Live at [github.com/TrevorHumble/Blender-Agentic-Developer](https://github.com/TrevorHumble/Blender-Agentic-Developer). CI runs on every push and PR via GitHub Actions; two add-ons shipped (`bevel_bezier_corners`, `phyllotaxis`); headless test harness and eval harness passing.
+
+<!-- gate scratch -->
+
+<!-- gate scratch -->
