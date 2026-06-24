@@ -54,7 +54,7 @@ jobs:
 
       - name: Cache Blender 5.1
         id: cache-blender
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: blender
           key: blender-5.1.0-linux-x64
